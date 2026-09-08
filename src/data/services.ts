@@ -52,6 +52,7 @@ export const services: Service[] = [
     long: 'Shower bases, niches and hobless showers are fully tanked and graded to fall to waste, with extra attention at the hob or level-entry junction where most shower leaks start.',
     before: '/uploads/shower-before.jpeg',
     after: '/uploads/shower-after.jpeg',
+    images: ['/uploads/shower-after.jpeg'],
     steps: [
       { n: '1', title: 'Check Set-Out', body: 'We confirm shower falls, waste locations, niches, waterstops and surrounding floor levels.' },
       { n: '2', title: 'Prepare', body: 'The shower base and wall substrates are prepared and any defects are rectified.' },
@@ -80,8 +81,9 @@ export const services: Service[] = [
     name: 'Retaining walls and planter boxes',
     blurb: 'Below-ground membrane and drainage on retaining walls and planter boxes to keep water out of the structure.',
     long: 'Retaining walls and planter boxes are membraned and drained below ground so water in the soil is directed away from the structure instead of pushing through it.',
-    before: '/uploads/retaining-wall-after.jpeg',
-    after: '/uploads/retaining-wall-before.jpeg',
+    before: '/uploads/retaining-wall-before.jpeg',
+    after: '/uploads/retaining-wall-after.jpeg',
+    images: ['/uploads/retaining-wall-after.jpeg'],
     steps: [
       { n: '1', title: 'Assess', body: 'We inspect the structure, water exposure, drainage requirements, penetrations and access to determine the correct system.' },
       { n: '2', title: 'Prepare', body: 'Concrete or blockwork is cleaned and defects, voids and damaged areas are repaired.' },
