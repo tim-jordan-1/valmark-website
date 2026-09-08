@@ -17,7 +17,8 @@ const error = result?.error;
   success ? (
     <div class="text-center py-8">
       <p class="text-lg font-bold text-primary">
-        Thanks — a technician will call you back within one business hour.
+        Thanks — a technician will call you back within one to two business
+        days.
       </p>
     </div>
   ) : (
@@ -142,7 +143,7 @@ const error = result?.error;
         if (res.ok) {
           form.innerHTML = `<div class="text-center py-8">
             <p class="text-lg font-bold" style="color:#03334D">
-              Thanks — a technician will call you back within one business hour.
+              Thanks — a technician will call you back within one to two business days.
             </p>
           </div>`;
         } else {

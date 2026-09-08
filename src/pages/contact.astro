@@ -1,15 +1,21 @@
 ---
-import Base from '../layouts/Base.astro';
-import { site } from '../data/site';
-import { services } from '../data/services';
+import Base from "../layouts/Base.astro";
+import { site } from "../data/site";
+import { services } from "../data/services";
 ---
 
 <Base title="Contact — Valmark Waterproofing" activePage="contact">
   <!-- Hero -->
   <section class="bg-primary text-white py-16">
     <div class="max-w-[1200px] mx-auto px-6 text-center">
-      <p class="text-accent-light uppercase tracking-wider font-bold text-sm mb-4">Free Inspection</p>
-      <h1 class="text-[clamp(34px,4.8vw,52px)] font-black leading-tight mb-6">Get In Touch With Waterproofing Specialists</h1>
+      <p
+        class="text-accent-light uppercase tracking-wider font-bold text-sm mb-4"
+      >
+        Free Inspection
+      </p>
+      <h1 class="text-[clamp(34px,4.8vw,52px)] font-black leading-tight mb-6">
+        Get In Touch With Waterproofing Specialists
+      </h1>
     </div>
   </section>
 
@@ -42,11 +48,12 @@ import { services } from '../data/services';
             required
             class="w-full border border-border-dark rounded px-4 py-3"
           />
-          <select name="service" class="w-full border border-border-dark rounded px-4 py-3 text-text-main">
+          <select
+            name="service"
+            class="w-full border border-border-dark rounded px-4 py-3 text-text-main"
+          >
             <option value="">Select a service</option>
-            {services.map((s) => (
-              <option value={s.id}>{s.name}</option>
-            ))}
+            {services.map((s) => <option value={s.id}>{s.name}</option>)}
           </select>
           <textarea
             name="message"
@@ -76,17 +83,38 @@ import { services } from '../data/services';
           <h3 class="font-bold text-lg text-primary mb-4">Contact Details</h3>
           <div class="flex flex-col gap-3 text-text-secondary">
             <div>
-              <p class="font-semibold text-primary text-sm uppercase tracking-wider mb-1">Hours</p>
+              <p
+                class="font-semibold text-primary text-sm uppercase tracking-wider mb-1"
+              >
+                Hours
+              </p>
               <p>Mon–Fri 7:00–6:00 · Sat 8:00–2:00</p>
-              <p class="text-sm text-text-tertiary">Emergency dispatch any hour</p>
+              <p class="text-sm text-text-tertiary">
+                Emergency dispatch any hour
+              </p>
             </div>
             <div>
-              <p class="font-semibold text-primary text-sm uppercase tracking-wider mb-1">Email</p>
-              <a href={`mailto:${site.email}`} class="text-accent hover:underline">{site.email}</a>
+              <p
+                class="font-semibold text-primary text-sm uppercase tracking-wider mb-1"
+              >
+                Email
+              </p>
+              <a
+                href={`mailto:${site.email}`}
+                class="text-accent hover:underline">{site.email}</a
+              >
             </div>
             <div>
-              <p class="font-semibold text-primary text-sm uppercase tracking-wider mb-1">Phone</p>
-              <a href={site.tel} class="text-accent font-bold text-xl hover:underline">{site.phone}</a>
+              <p
+                class="font-semibold text-primary text-sm uppercase tracking-wider mb-1"
+              >
+                Phone
+              </p>
+              <a
+                href={site.tel}
+                class="text-accent font-bold text-xl hover:underline"
+                >{site.phone}</a
+              >
             </div>
           </div>
         </div>
@@ -96,9 +124,11 @@ import { services } from '../data/services';
 </Base>
 
 <script>
-  document.getElementById('contact-form')?.addEventListener('submit', (e) => {
+  document.getElementById("contact-form")?.addEventListener("submit", (e) => {
     e.preventDefault();
-    const msg = document.getElementById('contact-msg');
-    if (msg) msg.textContent = 'Thanks — a technician will call you back within one business hour.';
+    const msg = document.getElementById("contact-msg");
+    if (msg)
+      msg.textContent =
+        "Thanks — a technician will call you back within one to two business days.";
   });
 </script>
