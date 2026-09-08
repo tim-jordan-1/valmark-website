@@ -1,0 +1,70 @@
+---
+import Base from '../layouts/Base.astro';
+import { gallery, galleryCategories } from '../data/gallery';
+---
+
+<Base title="Gallery — Valmark Waterproofing" activePage="gallery">
+  <!-- Hero -->
+  <section class="bg-primary text-white py-16">
+    <div class="max-w-[1200px] mx-auto px-6 text-center">
+      <p class="text-accent-light uppercase tracking-wider font-bold text-sm mb-4">Our Work</p>
+      <h1 class="text-[clamp(34px,4.8vw,52px)] font-black leading-tight mb-6">Wet On Monday, Dry By Friday</h1>
+      <p class="text-lg leading-relaxed max-w-2xl mx-auto text-gray-300">Real results from recent waterproofing projects across Melbourne — before and after, side by side.</p>
+    </div>
+  </section>
+
+  <!-- Filter chips -->
+  <div class="max-w-[1200px] mx-auto px-6 py-8 flex flex-wrap justify-center gap-3">
+    {galleryCategories.map((cat, i) => (
+      <button
+        class:list={[
+          'gallery-chip px-5 py-[11px] rounded-full font-semibold text-sm cursor-pointer transition-colors',
+          i === 0 ? 'bg-primary text-white' : 'bg-white text-primary border border-border-dark',
+        ]}
+        data-cat={cat}
+      >
+        {cat}
+      </button>
+    ))}
+  </div>
+
+  <!-- Gallery grid -->
+  <div class="max-w-[1200px] mx-auto px-6 pb-16">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-[26px]">
+      {gallery.map((entry) => (
+        <div class="gallery-card bg-white border border-border overflow-hidden" data-cat={entry.cat}>
+          <div class="grid grid-cols-2">
+            <div class="relative" style="aspect-ratio:4/3;">
+              <img src={entry.before} alt={`${entry.title} — Before`} class="w-full h-full object-cover" />
+              <span class="absolute left-2 bottom-2 bg-white px-3 py-1 text-xs font-bold text-primary">Before</span>
+            </div>
+            <div class="relative" style="aspect-ratio:4/3;">
+              <img src={entry.after} alt={`${entry.title} — After`} class="w-full h-full object-cover" />
+              <span class="absolute right-2 bottom-2 bg-white px-3 py-1 text-xs font-bold text-primary">After</span>
+            </div>
+          </div>
+          <div class="p-5">
+            <p class="text-accent uppercase text-sm font-semibold mb-1">{entry.cat}</p>
+            <h3 class="font-bold text-lg mb-1">{entry.title}</h3>
+            <p class="text-text-tertiary text-sm">{entry.meta}</p>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</Base>
+
+<script>
+  const chips = document.querySelectorAll<HTMLElement>('.gallery-chip');
+  const cards = document.querySelectorAll<HTMLElement>('.gallery-card');
+  const active = 'bg-primary text-white';
+  const inactive = 'bg-white text-primary border border-border-dark';
+
+  chips.forEach((chip) => {
+    chip.addEventListener('click', () => {
+      const cat = chip.dataset.cat;
+      chips.forEach((c) => { c.className = c.className.replace(active, '').replace(inactive, ''); c.classList.add(...(c === chip ? active.split(' ') : inactive.split(' '))); });
+      cards.forEach((card) => { card.hidden = cat !== 'All' && card.dataset.cat !== cat; });
+    });
+  });
+</script>

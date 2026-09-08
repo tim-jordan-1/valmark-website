@@ -1,0 +1,60 @@
+---
+interface Props { images: string[]; alt?: string; }
+const { images, alt = '' } = Astro.props;
+const single = images.length <= 1;
+---
+
+<div class="relative overflow-hidden bg-[#EDEDED]" style="aspect-ratio:4/3;" data-carousel data-images={images.join(',')}>
+  <img
+    src={images[0]}
+    alt={alt}
+    class="w-full h-full object-cover transition-opacity duration-300"
+    data-carousel-img
+  />
+  {!single && (
+    <>
+      <button data-carousel-prev class="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-primary/70 text-white flex items-center justify-center hover:bg-primary/90 transition-colors z-[2]">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M15 19l-7-7 7-7"/></svg>
+      </button>
+      <button data-carousel-next class="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-primary/70 text-white flex items-center justify-center hover:bg-primary/90 transition-colors z-[2]">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg>
+      </button>
+      <div class="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-2 z-[2]">
+        {images.map((_, i) => (
+          <button data-carousel-dot={i} class:list={['w-2.5 h-2.5 rounded-full transition-colors', i === 0 ? 'bg-white' : 'bg-white/50']} />
+        ))}
+      </div>
+    </>
+  )}
+</div>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-carousel]').forEach((carousel) => {
+    const img = carousel.querySelector('[data-carousel-img]') as HTMLImageElement;
+    const dots = carousel.querySelectorAll<HTMLElement>('[data-carousel-dot]');
+    const srcs = Array.from(dots).map((_, i) => {
+      // Reconstruct sources from the server-rendered dot count + initial img src
+      return ''; // filled below
+    });
+    if (dots.length < 2) return;
+
+    // Extract image sources from a data attribute
+    const allSrcs = carousel.dataset.images?.split(',') || [img.src];
+    let idx = 0;
+    let timer: number;
+
+    const show = (n: number) => {
+      idx = (n + allSrcs.length) % allSrcs.length;
+      img.style.opacity = '0';
+      setTimeout(() => { img.src = allSrcs[idx]; img.style.opacity = '1'; }, 280);
+      dots.forEach((d, i) => { d.className = d.className.replace(/bg-white(\/50)?/, i === idx ? 'bg-white' : 'bg-white/50'); });
+    };
+
+    const resetTimer = () => { clearInterval(timer); timer = window.setInterval(() => show(idx + 1), 6000); };
+
+    carousel.querySelector('[data-carousel-prev]')?.addEventListener('click', () => { show(idx - 1); resetTimer(); });
+    carousel.querySelector('[data-carousel-next]')?.addEventListener('click', () => { show(idx + 1); resetTimer(); });
+    dots.forEach((d) => d.addEventListener('click', () => { show(Number(d.dataset.carouselDot)); resetTimer(); }));
+    resetTimer();
+  });
+</script>

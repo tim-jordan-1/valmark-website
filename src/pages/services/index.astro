@@ -1,0 +1,39 @@
+---
+import Base from '../../layouts/Base.astro';
+import { services } from '../../data/services';
+---
+
+<Base title="Services — Valmark Waterproofing" activePage="services">
+  <!-- Hero -->
+  <section class="bg-primary text-white py-20">
+    <div class="max-w-[1200px] mx-auto px-6 text-center">
+      <span class="text-accent-light uppercase tracking-wider font-bold text-sm">Services</span>
+      <h1 class="text-[clamp(34px,4.8vw,52px)] font-black mt-3 mb-5">Fix The Cause, Not The Stain</h1>
+      <p class="text-lg leading-[1.7] text-gray-300 max-w-2xl mx-auto">
+        From bathrooms and balconies to retaining walls and leak repairs — full waterproofing services for residential and commercial builds across Melbourne and Victoria.
+      </p>
+    </div>
+  </section>
+
+  <!-- Services grid -->
+  <section class="py-16">
+    <div class="max-w-[1200px] mx-auto px-6">
+      <div class="grid grid-cols-[repeat(auto-fit,minmax(310px,1fr))] gap-[26px]">
+        {services.map((s) => (
+          <a href={`/services/${s.id}`} class="bg-white border border-border overflow-hidden group hover:shadow-lg transition-shadow">
+            {s.after ? (
+              <img src={s.after} alt={s.name} class="w-full object-cover" style="aspect-ratio:4/3;" />
+            ) : (
+              <div class="w-full bg-[#EDEDED]" style="aspect-ratio:4/3;background-image:repeating-linear-gradient(45deg,transparent,transparent 10px,rgba(0,0,0,.03) 10px,rgba(0,0,0,.03) 20px);"></div>
+            )}
+            <div class="p-6">
+              <h3 class="font-bold text-lg text-text-main mb-2 group-hover:text-accent transition-colors">{s.name}</h3>
+              <p class="text-text-secondary text-sm leading-relaxed mb-4">{s.blurb}</p>
+              <span class="text-accent font-semibold text-sm">Read more →</span>
+            </div>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+</Base>

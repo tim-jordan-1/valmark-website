@@ -1,0 +1,33 @@
+---
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import MobileBottomBar from '../components/MobileBottomBar.astro';
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+  activePage?: string;
+}
+
+const { title = 'Valmark Waterproofing — Melbourne', activePage = '' } = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{title}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet" />
+</head>
+<body class="font-roboto text-base text-text-main bg-white">
+  <Header activePage={activePage} />
+  <main>
+    <slot />
+  </main>
+  <Footer />
+  <MobileBottomBar />
+</body>
+</html>

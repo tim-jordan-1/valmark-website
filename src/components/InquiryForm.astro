@@ -1,0 +1,140 @@
+---
+import { actions } from 'astro:actions';
+import { SERVICE_NAMES } from '../data/services';
+
+interface Props {
+  source: 'lead-form' | 'contact-form';
+  compact?: boolean;
+}
+
+const { source, compact = false } = Astro.props;
+const result = Astro.getActionResult(actions.inquiry);
+const success = result && !result.error;
+const error = result?.error;
+---
+
+{success ? (
+  <div class="text-center py-8">
+    <p class="text-lg font-bold text-primary">
+      Thanks — a technician will call you back within one business hour.
+    </p>
+  </div>
+) : (
+  <form method="POST" action={actions.inquiry}>
+    <input type="hidden" name="source" value={source} />
+    <div class="absolute -left-[9999px]" aria-hidden="true">
+      <input type="text" name="honeypot" tabindex="-1" autocomplete="off" />
+    </div>
+
+    <div class={compact
+      ? 'grid grid-cols-[repeat(auto-fit,minmax(180px,1fr))] gap-3.5'
+      : 'grid gap-4'
+    }>
+      <div class={compact ? '' : 'grid grid-cols-[repeat(auto-fit,minmax(150px,1fr))] gap-4'}>
+        <label class="grid gap-1.5">
+          {!compact && <span class="font-medium text-[15px]">Full name *</span>}
+          <input
+            required
+            name="name"
+            placeholder={compact ? 'Name*' : 'Jane Doe'}
+            class="w-full border border-border-dark p-3.5 text-[15px] font-roboto"
+          />
+        </label>
+        <label class="grid gap-1.5">
+          {!compact && <span class="font-medium text-[15px]">Email *</span>}
+          <input
+            required
+            type="email"
+            name="email"
+            placeholder={compact ? 'Email Address*' : 'you@example.com'}
+            class="w-full border border-border-dark p-3.5 text-[15px] font-roboto"
+          />
+        </label>
+      </div>
+      <div class={compact ? '' : 'grid grid-cols-[repeat(auto-fit,minmax(150px,1fr))] gap-4'}>
+        <label class="grid gap-1.5">
+          {!compact && <span class="font-medium text-[15px]">Phone *</span>}
+          <input
+            required
+            name="phone"
+            inputmode="tel"
+            placeholder={compact ? 'Phone No*' : 'Best contact number'}
+            class="w-full border border-border-dark p-3.5 text-[15px] font-roboto"
+          />
+        </label>
+        <label class="grid gap-1.5">
+          {!compact && <span class="font-medium text-[15px]">Service *</span>}
+          <select
+            required
+            name="service"
+            class="w-full border border-border-dark p-3.5 text-[15px] font-roboto bg-white"
+          >
+            <option value="">Select Service*</option>
+            {SERVICE_NAMES.map((s) => <option>{s}</option>)}
+          </select>
+        </label>
+      </div>
+      <label class={compact ? 'col-span-full grid gap-1.5' : 'grid gap-1.5'}>
+        {!compact && <span class="font-medium text-[15px]">Message</span>}
+        <textarea
+          name="message"
+          rows={compact ? 3 : 4}
+          placeholder="Message"
+          class="w-full border border-border-dark p-3.5 text-[15px] font-roboto resize-y"
+        ></textarea>
+      </label>
+      <div class={compact ? 'col-span-full text-center' : ''}>
+        <button
+          type="submit"
+          class="bg-accent text-white border-0 px-11 py-4 font-bold text-[15px] uppercase tracking-wider cursor-pointer font-roboto"
+        >
+          {compact ? 'Enquiry Now' : 'Book your inspection today'}
+        </button>
+      </div>
+    </div>
+
+    {error && (
+      <p class="text-red-600 text-sm mt-3 text-center">
+        {error.message || 'Something went wrong. Please try calling us on 0422 878 034.'}
+      </p>
+    )}
+  </form>
+)}
+
+<script>
+  document.querySelectorAll('form[action*="inquiry"]').forEach((form) => {
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = form.querySelector('button[type="submit"]') as HTMLButtonElement;
+      const original = btn.textContent;
+      btn.textContent = 'Sending...';
+      btn.disabled = true;
+
+      try {
+        const res = await fetch(form.getAttribute('action')!, {
+          method: 'POST',
+          body: new FormData(form as HTMLFormElement),
+        });
+        if (res.ok) {
+          form.innerHTML = `<div class="text-center py-8">
+            <p class="text-lg font-bold" style="color:#03334D">
+              Thanks — a technician will call you back within one business hour.
+            </p>
+          </div>`;
+        } else {
+          throw new Error('Server error');
+        }
+      } catch {
+        btn.textContent = original;
+        btn.disabled = false;
+        let err = form.querySelector('.form-error') as HTMLElement | null;
+        if (!err) {
+          err = document.createElement('p');
+          err.className = 'form-error text-red-600 text-sm mt-3 text-center';
+          form.appendChild(err);
+        }
+        err.textContent = 'Something went wrong. Please try calling us on 0422 878 034.';
+      }
+    });
+  });
+</script>

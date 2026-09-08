@@ -1,0 +1,99 @@
+---
+import { services } from '../../data/services';
+import Base from '../../layouts/Base.astro';
+import ProcessStep from '../../components/ProcessStep.astro';
+import ImageCarousel from '../../components/ImageCarousel.astro';
+import { site } from '../../data/site';
+
+export function getStaticPaths() {
+  return services.map((s) => ({ params: { id: s.id }, props: { service: s } }));
+}
+
+const { service } = Astro.props;
+const related = services.filter((s) => s.id !== service.id);
+const stepsCount = service.steps.length;
+const stepsWord: Record<number, string> = { 4: 'Four', 5: 'Five', 6: 'Six', 7: 'Seven' };
+const stepsLabel = stepsWord[stepsCount] || String(stepsCount);
+---
+
+<Base title={`${service.name} — Valmark Waterproofing`} activePage="services">
+  <!-- Breadcrumb -->
+  <div class="bg-bg-light border-b border-border py-3">
+    <div class="max-w-[1200px] mx-auto px-6 text-sm">
+      <a href="/" class="text-accent hover:underline">Home</a>
+      <span class="text-text-tertiary mx-2">›</span>
+      <a href="/services" class="text-accent hover:underline">Services</a>
+      <span class="text-text-tertiary mx-2">›</span>
+      <span class="text-text-tertiary">{service.name}</span>
+    </div>
+  </div>
+
+  <!-- Hero -->
+  <section class="bg-primary text-white py-16">
+    <div class="max-w-[1200px] mx-auto px-6 grid lg:grid-cols-2 gap-10 items-center">
+      <div>
+        <span class="text-accent-light uppercase tracking-wider font-bold text-sm">Service</span>
+        <h1 class="text-[clamp(28px,3.5vw,42px)] font-black mt-3 mb-5">{service.name}</h1>
+        <p class="text-lg leading-[1.7] text-gray-300 mb-8">{service.long}</p>
+        <div class="flex flex-wrap gap-4">
+          <a href="/contact" class="bg-accent text-white px-8 py-4 font-bold uppercase tracking-wider text-sm hover:opacity-90 transition-opacity">
+            Get Free Inspection
+          </a>
+          <a href={site.tel} class="border-2 border-white text-white px-8 py-4 font-bold uppercase tracking-wider text-sm hover:bg-white/10 transition-colors">
+            Call Now
+          </a>
+        </div>
+      </div>
+      <div>
+        {service.images && service.images.length > 0 ? (
+          <ImageCarousel images={service.images} alt={service.name} />
+        ) : (
+          <div class="bg-[#EDEDED]" style="aspect-ratio:4/3;background:repeating-linear-gradient(45deg,transparent,transparent 10px,rgba(0,0,0,.03) 10px,rgba(0,0,0,.03) 20px);"></div>
+        )}
+      </div>
+    </div>
+  </section>
+
+  <!-- Process steps -->
+  <section class="py-16">
+    <div class="max-w-[1200px] mx-auto px-6">
+      <h2 class="text-center text-3xl font-black text-primary mb-10">{stepsLabel} Steps, One Crew, No Surprises</h2>
+      <div class="grid grid-cols-[repeat(auto-fit,minmax(310px,1fr))] gap-[26px]">
+        {service.steps.map((s) => (
+          <ProcessStep n={s.n} title={s.title} body={s.body} />
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Warranty banner -->
+  <section class="bg-accent-bg py-16">
+    <div class="max-w-[1200px] mx-auto px-6 text-center">
+      <span class="text-accent uppercase tracking-wider font-bold text-sm">Warranty</span>
+      <h2 class="text-3xl font-black text-primary mt-3 mb-4">7 Years, Transferable To The Next Owner</h2>
+      <p class="text-text-secondary max-w-2xl mx-auto leading-[1.7]">
+        Every project comes with a 7-year written warranty that transfers to the next owner at no extra cost — because good waterproofing should outlast the sale.
+      </p>
+      <a href="/contact" class="bg-accent text-white px-8 py-4 font-bold uppercase tracking-wider text-sm inline-block mt-6 hover:opacity-90 transition-opacity">
+        Get Free Inspection
+      </a>
+    </div>
+  </section>
+
+  <!-- Related services -->
+  <section class="py-16">
+    <div class="max-w-[1200px] mx-auto px-6">
+      <h2 class="text-2xl font-bold text-primary mb-6">Related services</h2>
+      <div class="flex flex-wrap gap-3">
+        {related.map((s) => (
+          <a
+            href={`/services/${s.id}`}
+            class="border border-border-dark rounded-full px-[22px] py-3 text-sm font-semibold text-primary hover:bg-accent-bg transition-colors"
+          >
+            {s.name}
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+</Base>
