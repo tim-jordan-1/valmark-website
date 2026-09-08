@@ -1,0 +1,338 @@
+---
+import Base from "../layouts/Base.astro";
+import BeforeAfterSlider from "../components/BeforeAfterSlider.astro";
+import { services } from "../data/services";
+import { site, threeBoxes, credentials } from "../data/site";
+---
+
+<Base activePage="home">
+  <!-- 1. Hero -->
+  <section class="bg-primary text-white">
+    <div
+      class="max-w-[1200px] mx-auto px-6 py-16 lg:py-24 grid lg:grid-cols-2 gap-10 items-center"
+    >
+      <div>
+        <h1 class="text-[clamp(34px,4.8vw,52px)] font-black leading-[1.1] mb-6">
+          Protect Your Home With Expert Waterproofing Solutions
+        </h1>
+        <p class="text-lg leading-relaxed text-accent-text mb-8">
+          Melbourne's trusted waterproofing specialists. Every job backed by a {
+            site.warranty
+          }-year transferable warranty and over a decade of hands-on experience.
+        </p>
+        <div class="flex flex-wrap gap-4">
+          <a
+            href="/contact"
+            class="bg-white text-primary font-bold uppercase tracking-wider px-8 py-4 text-[15px] hover:opacity-90 transition-opacity"
+          >
+            Contact Us
+          </a>
+          <a
+            href="/contact"
+            class="bg-accent text-white font-bold uppercase tracking-wider px-8 py-4 text-[15px] hover:opacity-90 transition-opacity"
+          >
+            Enquiry Now
+          </a>
+        </div>
+      </div>
+      <div
+        class="hidden lg:block h-[400px] bg-[repeating-linear-gradient(45deg,transparent,transparent_10px,rgba(255,255,255,.05)_10px,rgba(255,255,255,.05)_20px)] rounded"
+      >
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. Lead Form -->
+  <section class="py-16">
+    <div class="max-w-[900px] mx-auto px-6">
+      <div
+        class="bg-white shadow-[rgba(100,100,111,.2)_0px_7px_29px_0px] p-8 lg:p-12"
+      >
+        <h2 class="text-2xl lg:text-3xl font-bold text-center mb-8">
+          Get Your Free Quote Today
+        </h2>
+        <form id="lead-form" class="space-y-4">
+          <div class="grid grid-cols-1 lg:grid-cols-4 gap-4">
+            <input
+              type="text"
+              name="name"
+              placeholder="Full name *"
+              required
+              class="border border-border-dark px-4 py-3 w-full"
+            />
+            <input
+              type="email"
+              name="email"
+              placeholder="Email *"
+              required
+              class="border border-border-dark px-4 py-3 w-full"
+            />
+            <input
+              type="tel"
+              name="phone"
+              placeholder="Phone *"
+              required
+              inputmode="tel"
+              class="border border-border-dark px-4 py-3 w-full"
+            />
+            <select
+              name="service"
+              class="border border-border-dark px-4 py-3 w-full text-text-secondary"
+            >
+              <option value="">Select a service</option>
+              {services.map((s) => <option value={s.id}>{s.name}</option>)}
+            </select>
+          </div>
+          <textarea
+            name="message"
+            rows={4}
+            placeholder="Tell us about your project..."
+            class="border border-border-dark px-4 py-3 w-full"></textarea>
+          <div class="text-center">
+            <button
+              type="submit"
+              class="bg-accent text-white font-bold uppercase tracking-wider px-10 py-4 text-[15px] hover:opacity-90 transition-opacity"
+            >
+              Get Free Quote
+            </button>
+          </div>
+          <p id="lead-msg" class="text-center text-accent font-semibold"></p>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. Three Boxes -->
+  <section class="border-t-2 border-primary">
+    <div
+      class="max-w-[1200px] mx-auto px-6 py-12 grid grid-cols-1 lg:grid-cols-3 gap-8"
+    >
+      {
+        threeBoxes.map((text) => (
+          <div class="flex items-center gap-4">
+            <div class="w-12 h-12 rounded-full bg-accent flex items-center justify-center shrink-0">
+              <svg
+                class="w-6 h-6 text-white"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="3"
+                viewBox="0 0 24 24"
+              >
+                <path d="M5 13l4 4L19 7" />
+              </svg>
+            </div>
+            <span class="font-bold text-lg text-primary">{text}</span>
+          </div>
+        ))
+      }
+    </div>
+  </section>
+
+  <!-- 4. Services Grid -->
+  <section class="py-16">
+    <div class="max-w-[1200px] mx-auto px-6">
+      <p class="text-accent font-bold uppercase tracking-wider text-sm mb-2">
+        What We Do
+      </p>
+      <h2 class="text-3xl lg:text-4xl font-bold text-primary mb-10">
+        Our Waterproofing Services
+      </h2>
+      <div
+        class="grid grid-cols-[repeat(auto-fit,minmax(310px,1fr))] gap-[26px] mb-10"
+      >
+        {
+          services.slice(0, 6).map((s) => (
+            <div class="border border-border bg-white">
+              {s.before && s.after ? (
+                <BeforeAfterSlider beforeSrc={s.before} afterSrc={s.after} />
+              ) : (
+                <div class="bg-[#EDEDED]" style="aspect-ratio:4/3;" />
+              )}
+              <div class="p-6">
+                <h3 class="font-bold text-lg mb-2">{s.name}</h3>
+                <p class="text-text-secondary text-sm leading-relaxed mb-4">
+                  {s.blurb}
+                </p>
+                <a
+                  href={`/services/${s.id}`}
+                  class="text-accent font-semibold text-sm hover:underline"
+                >
+                  Read more →
+                </a>
+              </div>
+            </div>
+          ))
+        }
+      </div>
+      <div class="text-center">
+        <a
+          href="/services"
+          class="inline-block border-2 border-primary text-primary font-bold uppercase tracking-wider px-10 py-4 text-[15px] hover:bg-primary hover:text-white transition-colors"
+        >
+          View All Services
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. Commercial / Residential -->
+  <section class="grid lg:grid-cols-2">
+    <div class="bg-[#052a3f] text-white p-12 lg:p-16">
+      <svg
+        class="w-14 h-14 mb-6 text-accent"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.5"
+        viewBox="0 0 24 24"
+      >
+        <path
+          d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6H15m-1.5 3H15m-1.5 3H15M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21"
+        ></path>
+      </svg>
+      <h3 class="text-2xl font-bold mb-4">Commercial</h3>
+      <p class="text-gray-300 leading-relaxed">
+        Full-scope waterproofing for commercial construction — offices, retail,
+        multi-storey residential and mixed-use developments. We work alongside
+        builders, project managers and other trades to deliver compliant
+        membrane systems on schedule.
+      </p>
+    </div>
+    <div class="bg-primary text-white p-12 lg:p-16">
+      <svg
+        class="w-14 h-14 mb-6 text-accent"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.5"
+        viewBox="0 0 24 24"
+      >
+        <path
+          d="M8.25 21v-4.875c0-.621.504-1.125 1.125-1.125h5.25c.621 0 1.125.504 1.125 1.125V21m2.25 0h-12a2.25 2.25 0 01-2.25-2.25V9.349m17.25 2.901L12 3.75 2.25 12.25"
+        ></path>
+      </svg>
+      <h3 class="text-2xl font-bold mb-4">Residential</h3>
+      <p class="text-gray-300 leading-relaxed">
+        Bathrooms, laundries, balconies, retaining walls and leak repairs for
+        homeowners and renovators. Whether it is a new build, a renovation or an
+        urgent repair, we apply the same standard of workmanship to every home.
+      </p>
+    </div>
+  </section>
+
+  <!-- 6. About Preview -->
+  <section class="py-16">
+    <div
+      class="max-w-[1200px] mx-auto px-6 grid lg:grid-cols-2 gap-12 items-center"
+    >
+      <div>
+        <p class="text-accent font-bold uppercase tracking-wider text-sm mb-2">
+          About Valmark
+        </p>
+        <h2 class="text-3xl lg:text-4xl font-bold text-primary mb-6">
+          Quality Waterproofing You Can Trust
+        </h2>
+        <p class="text-text-secondary leading-[1.7] mb-6">
+          Valmark Waterproofing is a Melbourne-based specialist delivering
+          waterproofing solutions for residential and commercial projects across
+          Victoria. With over a decade of industry experience, engineering
+          qualifications and a commitment to doing the job right the first time,
+          we protect your property from water damage — guaranteed.
+        </p>
+        <div class="flex flex-wrap items-center gap-6">
+          <a
+            href="/why"
+            class="bg-accent text-white font-bold uppercase tracking-wider px-8 py-4 text-[15px] hover:opacity-90 transition-opacity"
+          >
+            Learn More
+          </a>
+          <a
+            href={site.tel}
+            class="text-primary font-bold text-xl hover:text-accent transition-colors"
+            >{site.phone}</a
+          >
+        </div>
+      </div>
+      <div class="relative hidden lg:block">
+        <div
+          class="h-[380px] bg-[#EDEDED] bg-[repeating-linear-gradient(45deg,transparent,transparent_10px,rgba(0,0,0,.03)_10px,rgba(0,0,0,.03)_20px)] rounded"
+        >
+        </div>
+        <div
+          class="absolute -bottom-6 -left-6 w-[130px] h-[130px] rounded-full bg-accent flex flex-col items-center justify-center text-white shadow-lg"
+        >
+          <span class="text-4xl font-black leading-none">{site.warranty}</span>
+          <span class="text-xs font-bold uppercase tracking-wider">Year</span>
+          <span class="text-xs font-bold uppercase tracking-wider"
+            >Warranty</span
+          >
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7. CTA Bar -->
+  <section class="bg-primary text-white py-16">
+    <div class="max-w-[1200px] mx-auto px-6 text-center">
+      <h2 class="text-2xl lg:text-3xl font-bold mb-6">
+        For The Best In Waterproofing & Related Trades, Call ValMark
+      </h2>
+      <a
+        href="/contact"
+        class="inline-block bg-accent text-white font-bold uppercase tracking-wider px-10 py-4 text-[15px] hover:opacity-90 transition-opacity"
+      >
+        Contact Us
+      </a>
+    </div>
+  </section>
+
+  <!-- 8. Why Us Credentials -->
+  <section class="bg-accent-bg py-16">
+    <div class="max-w-[1200px] mx-auto px-6">
+      <p class="text-accent font-bold uppercase tracking-wider text-sm mb-2">
+        Why Valmark
+      </p>
+      <h2 class="text-3xl lg:text-4xl font-bold text-primary mb-10">
+        Built on Experience. Backed by Technical Knowledge.
+      </h2>
+
+      <!-- First 2: dark cards -->
+      <div class="grid lg:grid-cols-2 gap-[26px] mb-[26px]">
+        {
+          credentials.slice(0, 2).map((c, i) => (
+            <div class="bg-primary text-white p-8 lg:p-10">
+              <span class="text-accent font-bold text-sm">0{i + 1}</span>
+              <h3 class="text-xl font-bold mt-2 mb-3">{c.title}</h3>
+              <p class="text-gray-300 leading-relaxed">{c.body}</p>
+            </div>
+          ))
+        }
+      </div>
+
+      <!-- Next 3: white cards -->
+      <div
+        class="grid grid-cols-[repeat(auto-fit,minmax(310px,1fr))] gap-[26px]"
+      >
+        {
+          credentials.slice(2).map((c, i) => (
+            <div class="bg-white border-t-[3px] border-accent p-8">
+              <span class="text-accent font-bold text-sm">0{i + 3}</span>
+              <h3 class="text-xl font-bold mt-2 mb-3 text-primary">
+                {c.title}
+              </h3>
+              <p class="text-text-secondary leading-relaxed">{c.body}</p>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+</Base>
+
+<script>
+  document.getElementById("lead-form")?.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const msg = document.getElementById("lead-msg");
+    if (msg)
+      msg.textContent =
+        "Thanks — a technician will call you back within one to two business days.";
+  });
+</script>

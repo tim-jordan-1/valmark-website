@@ -1,0 +1,74 @@
+---
+interface Props {
+  beforeSrc: string;
+  afterSrc: string;
+  id?: string;
+}
+const { beforeSrc, afterSrc, id } = Astro.props;
+---
+
+<div
+  class="relative overflow-hidden bg-[#EDEDED]"
+  style="aspect-ratio:4/3;"
+  data-slider
+>
+  <img class="w-full h-full object-cover" src={afterSrc} alt="After" />
+  <img
+    class="ba-before absolute top-0 left-0 w-full h-full object-cover"
+    src={beforeSrc}
+    alt="Before"
+    style="clip-path:inset(0 50% 0 0);"
+  />
+  <div
+    class="ba-line absolute top-0 bottom-0 w-[2px] bg-white -translate-x-1/2 pointer-events-none z-[2]"
+    style="left:50%;box-shadow:0 0 6px rgba(0,0,0,.5);"
+  >
+  </div>
+  <div
+    class="ba-handle absolute top-1/2 z-[3] w-[52px] h-[52px] rounded-full bg-white flex items-center justify-center cursor-ew-resize -translate-x-1/2 -translate-y-1/2"
+    style="left:50%;box-shadow:0 2px 10px rgba(0,0,0,.35);"
+  >
+    <span class="font-bold text-[15px] text-primary tracking-[2px]">◄►</span>
+  </div>
+  <div
+    class="absolute left-[14px] bottom-[14px] bg-white px-[18px] py-2 font-bold text-[15px] text-primary pointer-events-none z-[2]"
+  >
+    Before
+  </div>
+  <div
+    class="absolute right-[14px] bottom-[14px] bg-white px-[18px] py-2 font-bold text-[15px] text-primary pointer-events-none z-[2]"
+  >
+    After
+  </div>
+</div>
+
+<script>
+  document.addEventListener("pointerdown", (e) => {
+    const handle = (e.target as HTMLElement).closest(".ba-handle");
+    if (!handle) return;
+    const slider = handle.closest("[data-slider]") as HTMLElement;
+    if (!slider) return;
+    const before = slider.querySelector(".ba-before") as HTMLElement;
+    const line = slider.querySelector(".ba-line") as HTMLElement;
+    (e.target as HTMLElement).setPointerCapture(e.pointerId);
+
+    const onMove = (ev: PointerEvent) => {
+      const rect = slider.getBoundingClientRect();
+      const pct = Math.max(
+        0,
+        Math.min(100, ((ev.clientX - rect.left) / rect.width) * 100),
+      );
+      before.style.clipPath = `inset(0 ${100 - pct}% 0 0)`;
+      line.style.left = pct + "%";
+      (handle as HTMLElement).style.left = pct + "%";
+    };
+
+    const onUp = () => {
+      document.removeEventListener("pointermove", onMove);
+      document.removeEventListener("pointerup", onUp);
+    };
+
+    document.addEventListener("pointermove", onMove);
+    document.addEventListener("pointerup", onUp);
+  });
+</script>

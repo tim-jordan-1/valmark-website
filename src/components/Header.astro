@@ -1,0 +1,158 @@
+---
+import { site, navItems } from "../data/site";
+
+interface Props {
+  activePage?: string;
+}
+
+const { activePage = "" } = Astro.props;
+
+const pageMap: Record<string, string> = {
+  "/": "home",
+  "/services": "services",
+  "/why": "why",
+  "/gallery": "gallery",
+  "/area": "area",
+  "/contact": "contact",
+};
+---
+
+<header class="sticky top-0 z-50 bg-white">
+  <!-- Top info bar (desktop only) -->
+  <div class="hidden lg:block bg-primary text-white text-sm">
+    <div
+      class="max-w-[1200px] mx-auto px-6 py-2 flex justify-end items-center gap-6"
+    >
+      <a
+        href={`mailto:${site.email}`}
+        class="hover:text-accent-text transition-colors">{site.email}</a
+      >
+      <a href={site.tel} class="hover:text-accent-text transition-colors"
+        >{site.phone}</a
+      >
+    </div>
+  </div>
+
+  <!-- Main nav -->
+  <div class="border-b border-border">
+    <div class="max-w-[1200px] mx-auto px-6 flex items-center justify-between">
+      <!-- Logo -->
+      <a href="/">
+        <img
+          src="/uploads/logo-transparent.png"
+          alt="Valmark Waterproofing"
+          class="h-[70px] lg:h-[112px] w-auto py-2"
+        />
+      </a>
+
+      <!-- Desktop nav -->
+      <nav class="hidden lg:flex items-center gap-[30px]">
+        {
+          navItems.map((item) => {
+            const isActive = pageMap[item.href] === activePage;
+            return (
+              <a
+                href={item.href}
+                class:list={[
+                  "py-5 border-b-2 font-medium text-[15px] uppercase tracking-wider transition-colors",
+                  isActive
+                    ? "border-accent text-accent"
+                    : "border-transparent text-primary hover:text-accent",
+                ]}
+              >
+                {item.label}
+              </a>
+            );
+          })
+        }
+        <a
+          href="/contact"
+          class="bg-accent text-white uppercase tracking-wider font-bold px-8 py-[14px] text-[15px] hover:opacity-90 transition-opacity"
+        >
+          Enquiry Now
+        </a>
+      </nav>
+
+      <!-- Mobile menu button -->
+      <button
+        id="menu-btn"
+        class="lg:hidden flex items-center gap-2 text-primary font-bold uppercase tracking-wider text-sm py-4"
+      >
+        <svg
+          class="w-6 h-6"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+        >
+          <path d="M4 6h16M4 12h16M4 18h16"></path>
+        </svg>
+        Menu
+      </button>
+    </div>
+
+    <!-- Mobile menu dropdown -->
+    <nav
+      id="mobile-menu"
+      class="lg:hidden hidden border-t border-border bg-white"
+    >
+      {
+        navItems.map((item) => {
+          const isActive = pageMap[item.href] === activePage;
+          return (
+            <a
+              href={item.href}
+              class:list={[
+                "block px-6 py-4 border-b border-border text-[15px] uppercase tracking-wider font-medium",
+                isActive
+                  ? "text-accent bg-accent-bg"
+                  : "text-primary hover:bg-bg-light",
+              ]}
+            >
+              {item.label}
+            </a>
+          );
+        })
+      }
+      <a
+        href="/contact"
+        class="block px-6 py-4 bg-accent text-white text-center uppercase tracking-wider font-bold"
+      >
+        Enquiry Now
+      </a>
+    </nav>
+  </div>
+
+  <!-- Scroll progress bar -->
+  <div class="h-1 bg-border">
+    <div
+      id="scroll-bar"
+      class="h-full bg-accent transition-[width] duration-100"
+      style="width:0%"
+    >
+    </div>
+  </div>
+</header>
+
+<script>
+  const btn = document.getElementById("menu-btn");
+  const menu = document.getElementById("mobile-menu");
+  btn?.addEventListener("click", () => menu?.classList.toggle("hidden"));
+  menu
+    ?.querySelectorAll("a")
+    .forEach((a) =>
+      a.addEventListener("click", () => menu?.classList.add("hidden")),
+    );
+
+  const bar = document.getElementById("scroll-bar");
+  window.addEventListener(
+    "scroll",
+    () => {
+      const max = document.documentElement.scrollHeight - innerHeight;
+      if (bar)
+        bar.style.width =
+          max > 4 ? Math.min(100, (scrollY / max) * 100) + "%" : "0";
+    },
+    { passive: true },
+  );
+</script>

@@ -1,0 +1,79 @@
+---
+import Base from '../layouts/Base.astro';
+import { stats, credentials } from '../data/site';
+import { team } from '../data/team';
+---
+
+<Base title="Why Us — Valmark Waterproofing" activePage="why">
+  <!-- Hero -->
+  <section class="bg-primary text-white py-20">
+    <div class="max-w-[1200px] mx-auto px-6 text-center">
+      <span class="text-accent-light uppercase tracking-wider font-bold text-sm">About Us</span>
+      <h1 class="text-[clamp(34px,4.8vw,52px)] font-black mt-3 mb-5">A Qualified, Insured And Experienced Team</h1>
+      <p class="text-lg leading-[1.7] text-gray-300 max-w-2xl mx-auto">
+        Valmark Waterproofing is led by qualified professionals with engineering and trade backgrounds, delivering reliable waterproofing across Melbourne and Victoria.
+      </p>
+    </div>
+  </section>
+
+  <!-- Stats bar -->
+  <section class="bg-accent-bg py-12">
+    <div class="max-w-[1200px] mx-auto px-6">
+      <div class="grid grid-cols-2 max-w-md mx-auto text-center gap-8">
+        {stats.map((s) => (
+          <div>
+            <div class="text-[42px] font-black text-primary leading-tight">{s.value}</div>
+            <div class="text-text-secondary mt-1">{s.label}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Credentials grid -->
+  <section class="py-16">
+    <div class="max-w-[1200px] mx-auto px-6">
+      <h2 class="text-[clamp(26px,3.5vw,36px)] font-black text-text-main text-center mb-12">Built on Experience. Backed by Technical Knowledge.</h2>
+      <div class="grid grid-cols-[repeat(auto-fit,minmax(310px,1fr))] gap-[26px]">
+        {credentials.map((c) => (
+          <div class="bg-white border border-border p-7">
+            <div class="w-12 h-12 rounded-full bg-accent-bg flex items-center justify-center mb-5">
+              <svg class="w-6 h-6 text-accent" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+              </svg>
+            </div>
+            <h3 class="font-bold text-lg text-text-main mb-2">{c.title}</h3>
+            <p class="text-text-secondary leading-[1.7]">{c.body}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Team section -->
+  <section class="py-16 bg-accent-bg">
+    <div class="max-w-[1200px] mx-auto px-6">
+      <h2 class="text-[clamp(26px,3.5vw,36px)] font-black text-text-main text-center mb-12">Meet The Team</h2>
+      <div class="grid grid-cols-[repeat(auto-fit,minmax(400px,1fr))] gap-[26px]">
+        {team.map((m) => (
+          <div class="bg-white border border-border p-8">
+            <div class="flex items-start gap-6 mb-5">
+              {m.photo ? (
+                <img src={m.photo} alt={m.name} class="w-[110px] h-[110px] rounded-full object-cover flex-shrink-0" />
+              ) : (
+                <div class="w-[110px] h-[110px] rounded-full bg-primary text-white text-3xl font-bold flex items-center justify-center flex-shrink-0">
+                  {m.initials}
+                </div>
+              )}
+              <div>
+                <h3 class="text-2xl font-bold text-text-main">{m.name}</h3>
+                <span class="text-accent uppercase tracking-wider font-semibold text-sm">{m.role}</span>
+              </div>
+            </div>
+            <p class="text-text-secondary leading-[1.7]">{m.bio}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+</Base>
