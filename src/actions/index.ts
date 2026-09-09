@@ -27,6 +27,14 @@ function checkRateLimit(ip: string): boolean {
   return true;
 }
 
+// ponytail: dev mode uses Resend's test domain, prod uses verified domain
+const SENDER_DOMAIN = process.env.RESEND_DOMAIN_VERIFIED === 'true'
+  ? 'valmark.com.au'
+  : 'resend.dev';
+const NOTIFICATION_FROM = `Valmark Website <noreply@${SENDER_DOMAIN}>`;
+const CONFIRMATION_FROM = `Valmark Waterproofing <noreply@${SENDER_DOMAIN}>`;
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'admin@valmark.com.au';
+
 const inquirySchema = z.object({
   name: z.string().min(1, 'Name is required').max(200),
   email: z.string().email('Invalid email address'),
@@ -73,15 +81,15 @@ export const server = {
 
       const [notification, confirmation] = await Promise.allSettled([
         resend.emails.send({
-          from: 'Valmark Website <noreply@valmark.com.au>',
+          from: NOTIFICATION_FROM,
           replyTo: input.email,
-          to: ['admin@valmark.com.au'],
+          to: [ADMIN_EMAIL],
           subject: `New inquiry: ${input.service} — ${input.name}`,
           html: inquiryNotificationHtml(inquiryData),
           text: inquiryNotificationText(inquiryData),
         }),
         resend.emails.send({
-          from: 'Valmark Waterproofing <noreply@valmark.com.au>',
+          from: CONFIRMATION_FROM,
           to: [input.email],
           subject: "We've received your inquiry — Valmark Waterproofing",
           html: confirmationHtml(input.name),

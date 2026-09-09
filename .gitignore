@@ -5,3 +5,5 @@ dist/
 .env
 .vercel/
 .image-slots.state.json
+.vercel
+.env*
