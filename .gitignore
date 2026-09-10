@@ -7,3 +7,7 @@ dist/
 .image-slots.state.json
 .vercel
 .env*
+
+# Cloudflare
+.dev.vars
+.wrangler/
