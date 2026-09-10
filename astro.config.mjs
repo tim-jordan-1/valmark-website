@@ -15,6 +15,32 @@ export default defineConfig({
         access: 'secret',
         type: 'string',
       },
+      RESEND_DOMAIN_VERIFIED: {
+        context: 'server',
+        access: 'public',
+        type: 'string',
+        optional: true,
+        default: 'false',
+      },
+      ADMIN_EMAIL: {
+        context: 'server',
+        access: 'public',
+        type: 'string',
+        optional: true,
+        default: 'admin@valmark.com.au',
+      },
+      KV_REST_API_URL: {
+        context: 'server',
+        access: 'secret',
+        type: 'string',
+        optional: true,
+      },
+      KV_REST_API_TOKEN: {
+        context: 'server',
+        access: 'secret',
+        type: 'string',
+        optional: true,
+      },
     },
   },
 });
