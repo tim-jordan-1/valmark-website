@@ -5,6 +5,15 @@ import vercel from '@astrojs/vercel';
 export default defineConfig({
   output: 'static',
   adapter: vercel(),
+  // Vercel proxies via X-Forwarded-Host. Without this allowlist Astro ignores it,
+  // falls back to `localhost`, and its checkOrigin middleware 403s every form POST.
+  security: {
+    allowedDomains: [
+      { hostname: '**.vercel.app', protocol: 'https' },
+      { hostname: 'valmark.com.au', protocol: 'https' },
+      { hostname: '**.valmark.com.au', protocol: 'https' },
+    ],
+  },
   vite: {
     plugins: [tailwindcss()],
   },

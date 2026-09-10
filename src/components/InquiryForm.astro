@@ -147,6 +147,8 @@ const error = result?.error;
             </p>
           </div>`;
         } else {
+          // ponytail: log the real reason — the user-facing text is deliberately vague
+          console.error("Inquiry failed", res.status, await res.text());
           throw new Error("Server error");
         }
       } catch {
