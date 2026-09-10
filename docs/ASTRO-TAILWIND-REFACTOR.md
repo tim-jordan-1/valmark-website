@@ -1,5 +1,7 @@
 # Astro + Tailwind CSS Refactor Plan
 
+> **Note:** This document was written during the initial build when the site was deployed on Vercel. The site has since migrated to **Cloudflare Pages** (Sep 2026). Code examples referencing `@astrojs/vercel` and `vercel.json` are historical — see `CLAUDE.md` for current configuration.
+
 > Convert the Valmark Waterproofing website from Claude Design Component (DC) runtime to Astro + Tailwind CSS.
 > Eliminates `support.js` (69 KB), `image-slot.js` (65 KB), React 18 CDN dependency (~185 KB).
 > Output: static site on Vercel with zero-JS pages and tiny interactive islands.
@@ -193,8 +195,8 @@ mv uploads public/uploads
 | `bathroom-work-2.jpeg` | Bathrooms carousel |
 | `shower-before.jpeg` | Shower-bases before/after, gallery |
 | `shower-after.jpeg` | Shower-bases service card, gallery |
-| `retaining-wall-before.jpeg` | Retaining-walls before/after, gallery |
-| `retaining-wall-after.jpeg` | Retaining-walls service card, gallery |
+| `retaining-wall-after.jpeg` | Retaining-walls before/after, gallery |
+| `retaining-wall-before.jpeg` | Retaining-walls service card, gallery |
 
 ---
 
@@ -279,8 +281,8 @@ export const services: Service[] = [
     name: 'Retaining walls and planter boxes',
     blurb: 'Below-ground membrane and drainage on retaining walls and planter boxes to keep water out of the structure.',
     long: 'Retaining walls and planter boxes are membraned and drained below ground so water in the soil is directed away from the structure instead of pushing through it.',
-    before: '/uploads/retaining-wall-after.jpeg',
-    after: '/uploads/retaining-wall-before.jpeg',
+    before: '/uploads/retaining-wall-before.jpeg',
+    after: '/uploads/retaining-wall-after.jpeg',
     steps: [
       { n: '1', title: 'Assess', body: 'We inspect the structure, water exposure, drainage requirements, penetrations and access to determine the correct system.' },
       { n: '2', title: 'Prepare', body: 'Concrete or blockwork is cleaned and defects, voids and damaged areas are repaired.' },
@@ -459,7 +461,7 @@ export interface GalleryEntry {
 
 export const gallery: GalleryEntry[] = [
   { cat: 'Showers', title: 'Hobless shower base, tanked and screeded', meta: 'Membrane + niche + screed · 2 days', before: '/uploads/shower-before.jpeg', after: '/uploads/shower-after.jpeg' },
-  { cat: 'Retaining Walls', title: 'Below-ground retaining wall, sheet membrane', meta: 'Membrane + drainage cell · 3 days', before: '/uploads/retaining-wall-after.jpeg', after: '/uploads/retaining-wall-before.jpeg' },
+  { cat: 'Retaining Walls', title: 'Below-ground retaining wall, sheet membrane', meta: 'Membrane + drainage cell · 3 days', before: '/uploads/retaining-wall-before.jpeg', after: '/uploads/retaining-wall-after.jpeg' },
   { cat: 'Laundries', title: 'Internal laundry floor, tanked to walls', meta: 'Bond breaker + two coats · 1 day', before: '/uploads/laundry-before.jpeg', after: '/uploads/laundry-after.jpeg' },
 ];
 
@@ -817,7 +819,7 @@ Two separate forms with the same pattern:
 document.getElementById('lead-form')?.addEventListener('submit', (e) => {
   e.preventDefault();
   document.getElementById('lead-msg').textContent =
-    'Thanks — a technician will call you back within one business hour.';
+    'Thanks — a technician will call you back within one to two business days.';
 });
 ```
 
