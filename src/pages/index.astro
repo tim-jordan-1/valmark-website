@@ -1,8 +1,12 @@
 ---
 import Base from "../layouts/Base.astro";
 import BeforeAfterSlider from "../components/BeforeAfterSlider.astro";
+import InquiryForm from "../components/InquiryForm.astro";
 import { services } from "../data/services";
 import { site, threeBoxes, credentials } from "../data/site";
+
+// Astro Actions need an on-demand route; the inquiry form lives here.
+export const prerender = false;
 ---
 
 <Base activePage="home">
@@ -51,53 +55,7 @@ import { site, threeBoxes, credentials } from "../data/site";
         <h2 class="text-2xl lg:text-3xl font-bold text-center mb-8">
           Get Your Free Quote Today
         </h2>
-        <form id="lead-form" class="space-y-4">
-          <div class="grid grid-cols-1 lg:grid-cols-4 gap-4">
-            <input
-              type="text"
-              name="name"
-              placeholder="Full name *"
-              required
-              class="border border-border-dark px-4 py-3 w-full"
-            />
-            <input
-              type="email"
-              name="email"
-              placeholder="Email *"
-              required
-              class="border border-border-dark px-4 py-3 w-full"
-            />
-            <input
-              type="tel"
-              name="phone"
-              placeholder="Phone *"
-              required
-              inputmode="tel"
-              class="border border-border-dark px-4 py-3 w-full"
-            />
-            <select
-              name="service"
-              class="border border-border-dark px-4 py-3 w-full text-text-secondary"
-            >
-              <option value="">Select a service</option>
-              {services.map((s) => <option value={s.id}>{s.name}</option>)}
-            </select>
-          </div>
-          <textarea
-            name="message"
-            rows={4}
-            placeholder="Tell us about your project..."
-            class="border border-border-dark px-4 py-3 w-full"></textarea>
-          <div class="text-center">
-            <button
-              type="submit"
-              class="bg-accent text-white font-bold uppercase tracking-wider px-10 py-4 text-[15px] hover:opacity-90 transition-opacity"
-            >
-              Get Free Quote
-            </button>
-          </div>
-          <p id="lead-msg" class="text-center text-accent font-semibold"></p>
-        </form>
+        <InquiryForm source="lead-form" compact />
       </div>
     </div>
   </section>
@@ -327,12 +285,3 @@ import { site, threeBoxes, credentials } from "../data/site";
   </section>
 </Base>
 
-<script>
-  document.getElementById("lead-form")?.addEventListener("submit", (e) => {
-    e.preventDefault();
-    const msg = document.getElementById("lead-msg");
-    if (msg)
-      msg.textContent =
-        "Thanks — a technician will call you back within one to two business days.";
-  });
-</script>
