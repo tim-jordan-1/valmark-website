@@ -1,15 +1,13 @@
 import { defineConfig } from 'astro/config';
 import tailwindcss from '@tailwindcss/vite';
-import vercel from '@astrojs/vercel';
+import cloudflare from '@astrojs/cloudflare';
 
 export default defineConfig({
   output: 'static',
-  adapter: vercel(),
-  // Vercel proxies via X-Forwarded-Host. Without this allowlist Astro ignores it,
-  // falls back to `localhost`, and its checkOrigin middleware 403s every form POST.
+  adapter: cloudflare(),
   security: {
     allowedDomains: [
-      { hostname: '**.vercel.app', protocol: 'https' },
+      { hostname: '**.pages.dev', protocol: 'https' },
       { hostname: 'valmark.com.au', protocol: 'https' },
       { hostname: '**.valmark.com.au', protocol: 'https' },
     ],
@@ -35,18 +33,6 @@ export default defineConfig({
         context: 'server',
         access: 'public',
         type: 'string',
-      },
-      KV_REST_API_URL: {
-        context: 'server',
-        access: 'secret',
-        type: 'string',
-        optional: true,
-      },
-      KV_REST_API_TOKEN: {
-        context: 'server',
-        access: 'secret',
-        type: 'string',
-        optional: true,
       },
     },
   },
