@@ -12,6 +12,7 @@ import {
   confirmationText,
 } from '../lib/emails/inquiry-confirmation';
 import { SERVICE_NAMES } from '../data/services';
+import { adminEmail } from '../lib/admin-email';
 
 // ponytail: in-memory rate limiter, resets on cold start — fine for low traffic
 const submissions = new Map<string, number[]>();
@@ -33,7 +34,6 @@ const SENDER_DOMAIN = process.env.RESEND_DOMAIN_VERIFIED === 'true'
   : 'resend.dev';
 const NOTIFICATION_FROM = `Valmark Website <noreply@${SENDER_DOMAIN}>`;
 const CONFIRMATION_FROM = `Valmark Waterproofing <noreply@${SENDER_DOMAIN}>`;
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'admin@valmark.com.au';
 
 const inquirySchema = z.object({
   name: z.string().min(1, 'Name is required').max(200),
@@ -83,7 +83,7 @@ export const server = {
         resend.emails.send({
           from: NOTIFICATION_FROM,
           replyTo: input.email,
-          to: [ADMIN_EMAIL],
+          to: [adminEmail()],
           subject: `New inquiry: ${input.service} — ${input.name}`,
           html: inquiryNotificationHtml(inquiryData),
           text: inquiryNotificationText(inquiryData),
