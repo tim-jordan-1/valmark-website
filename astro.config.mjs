@@ -26,8 +26,6 @@ export default defineConfig({
         context: 'server',
         access: 'public',
         type: 'string',
-        optional: true,
-        default: 'admin@valmark.com.au',
       },
       KV_REST_API_URL: {
         context: 'server',
