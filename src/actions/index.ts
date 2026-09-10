@@ -111,10 +111,11 @@ export const server = {
 
       // Store inquiry in Cloudflare KV (best-effort, non-blocking)
       try {
-        const kv = context.locals.runtime?.env?.INQUIRIES as KVNamespace | undefined;
-        if (kv) {
+        const { env } = await import("cloudflare:workers") as { env: Record<string, any> };
+        const inquiriesKv = env.INQUIRIES;
+        if (inquiriesKv) {
           const key = `inquiry:${crypto.randomUUID()}`;
-          await kv.put(key, JSON.stringify({
+          await inquiriesKv.put(key, JSON.stringify({
             ...inquiryData,
             id: key,
             createdAt: now.toISOString(),
