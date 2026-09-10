@@ -40,7 +40,7 @@ const inquirySchema = z.object({
   email: z.string().email('Invalid email address'),
   phone: z.string().min(6, 'Phone number is required').max(20),
   service: z.enum(SERVICE_NAMES, {
-    errorMap: () => ({ message: 'Please select a service' }),
+    error: 'Please select a service',
   }),
   // ponytail: .nullish(), not .optional().default(''). Astro maps a present-but-empty
   // form field to null unless the OUTERMOST validator is ZodOptional (see
