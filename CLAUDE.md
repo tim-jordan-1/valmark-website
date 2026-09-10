@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What This Is
 
-A multi-page marketing website for **Valmark Waterproofing** (Victoria, Australia), built with **Astro** and **Tailwind CSS v4**. Static site deployed to Vercel — zero client-side JS except small interactive islands (slider, carousel, form handlers, gallery filter).
+A multi-page marketing website for **Valmark Waterproofing** (Victoria, Australia), built with **Astro** and **Tailwind CSS v4**. Static site deployed to Cloudflare Pages — zero client-side JS except small interactive islands (slider, carousel, form handlers, gallery filter).
 
 ## Commands
 
@@ -38,8 +38,9 @@ Astro static site with Tailwind v4 via Vite plugin. No React — all interactivi
 | `src/layouts/Base.astro` | Shared HTML shell |
 | `src/styles/global.css` | Tailwind v4 theme tokens + base styles |
 | `public/uploads/` | Static images |
-| `astro.config.mjs` | Astro + Tailwind Vite plugin + Vercel adapter |
-| `vercel.json` | Cache headers for uploads and JS assets |
+| `astro.config.mjs` | Astro + Tailwind Vite plugin + Cloudflare adapter (`prerenderEnvironment: 'node'`) |
+| `wrangler.toml` | Cloudflare Pages project config, KV namespace binding |
+| `public/_headers` | Cache headers for uploads and JS assets |
 
 ## Interactive Islands (ship client JS)
 
@@ -56,17 +57,20 @@ The only backend path in the site. Used on `/` and `/contact`, both of which set
 `export const prerender = false` — Astro Actions need an on-demand route.
 
 **Flow:** `InquiryForm.astro` → Astro Action `inquiry` (`src/actions/index.ts`) → Resend
-(admin notification + customer auto-reply, via `Promise.allSettled`) → Vercel KV (best-effort).
-Only a rejected *admin* notification fails the request; a failed auto-reply or KV write is logged
-and swallowed.
+(admin notification + customer auto-reply, via `Promise.allSettled`) → Cloudflare Workers KV
+(best-effort). Only a rejected *admin* notification fails the request; a failed auto-reply or KV
+write is logged and swallowed.
+
+KV is accessed via `import("cloudflare:workers")` and its `env` export — `@astrojs/cloudflare` v14
+(Astro v6+) removed `context.locals.runtime.env`, so that's no longer how bindings are reached.
 
 The form works without JS (native POST re-renders the page via `Astro.getActionResult`). The
 client script intercepts submit and `fetch`es the same URL, swapping in a success message on
 `res.ok`.
 
-Required env vars (set in Vercel for Preview + Production): `RESEND_API_KEY`, `ADMIN_EMAIL`.
-`ADMIN_EMAIL` is read at call time and throws if unset. `RESEND_DOMAIN_VERIFIED=true` switches the
-sender from `resend.dev` to `valmark.com.au`. KV vars are optional.
+Required env vars (set via `wrangler pages secret put <NAME>` for Preview + Production):
+`RESEND_API_KEY`, `ADMIN_EMAIL`. `ADMIN_EMAIL` is read at call time and throws if unset.
+`RESEND_DOMAIN_VERIFIED=true` switches the sender from `resend.dev` to `valmark.com.au`.
 
 ### Two edge cases that broke this in production
 
@@ -95,17 +99,18 @@ reintroduces the bug. Guarded by `src/actions/schema.test.mjs` (`npx tsx src/act
 **2. `curl` cannot reproduce either bug.** Omitting `honeypot` entirely takes the working
 (field-absent) path. Reproduce with a real browser — Playwright — and read the network response.
 
-**3. `security.allowedDomains` is required on Vercel.**
+**3. `security.allowedDomains` is required on Cloudflare Pages.**
 Astro's `checkOrigin` middleware compares the `Origin` header to `Astro.url.origin`. Astro ignores
-`X-Forwarded-Host` unless `security.allowedDomains` is configured, so behind Vercel's proxy the host
-falls back to the literal `localhost`, no browser origin ever matches, and every POST gets
+`X-Forwarded-Host` unless `security.allowedDomains` is configured, so behind Cloudflare's proxy the
+host falls back to the literal `localhost`, no browser origin ever matches, and every POST gets
 `403 Cross-site POST form submissions are forbidden`. The allowlist in `astro.config.mjs` must cover
-any new domain the site is served from.
+`**.pages.dev` plus any custom domain the site is served from.
 
 ### Known limitation
 
-The rate limiter in `src/actions/index.ts` is an in-module `Map`. On Vercel it resets on cold start,
-so it effectively limits nothing. The honeypot is the only working spam defence. Move to
+The rate limiter in `src/actions/index.ts` is an in-module `Map`. On Cloudflare Workers it resets on
+cold start (isolates are ephemeral, same behavior as Vercel's serverless functions), so it
+effectively limits nothing. The honeypot is the only working spam defence. Move to
 Upstash-backed limiting or Turnstile if spam actually appears.
 
 ## Agent Workflow
@@ -129,14 +134,24 @@ Placeholder text (`[BUSINESS ADDRESS HERE]`, `Lic. #WP-4471822`) needs real valu
 
 ## Deployment
 
-Hosted on **Vercel**. Astro is auto-detected. `vercel.json` sets cache headers for static assets.
+Hosted on **Cloudflare Pages**. Astro builds to `dist/`, deployed via Wrangler.
 
-`npx vercel --prod --yes` deploys the local working tree and aliases it to
-`valmark-website.vercel.app`. Direct pushes to `main` are blocked — land changes via PR
+```bash
+npm run build && wrangler pages deploy dist   # Deploy to production
+wrangler pages deployment list --project-name valmark-website  # Check deployments
+```
+
+Environment secrets are set via `wrangler pages secret put <NAME>`. Required:
+`RESEND_API_KEY`, `ADMIN_EMAIL`. Optional: `RESEND_DOMAIN_VERIFIED`.
+
+KV namespace `INQUIRIES` stores form submissions (best-effort). Namespace ID
+is in `wrangler.toml`.
+
+For local dev with secrets, create `.dev.vars` (gitignored) with the same vars.
+
+Direct pushes to `main` are blocked — land changes via PR
 (`gh pr create` → `gh pr merge`).
 
-Preview deployments sit behind Vercel SSO and return `403`/`302` to unauthenticated requests, so
-they are useless for testing form POSTs. Verify against the production alias.
-
-After deploying, confirm the deployment actually landed (`npx vercel ls --prod`) before testing —
-a failed deploy looks identical to an unfixed bug.
+After deploying, confirm the deployment actually landed
+(`wrangler pages deployment list --project-name valmark-website`) before
+testing — a failed deploy looks identical to an unfixed bug.
