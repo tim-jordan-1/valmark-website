@@ -1,7 +1,6 @@
 import { defineAction, type ActionAPIContext } from 'astro:actions';
 import { z } from 'astro/zod';
 import { Resend } from 'resend';
-import { kv } from '@vercel/kv';
 import {
   inquiryNotificationHtml,
   inquiryNotificationText,
@@ -110,12 +109,14 @@ export const server = {
         console.warn('Auto-reply failed (non-critical):', confirmation.reason);
       }
 
-      // Store inquiry in Vercel KV (best-effort, non-blocking)
+      // Store inquiry in Cloudflare KV (best-effort, non-blocking)
       try {
-        if (process.env.KV_REST_API_URL) {
-          await kv.lpush('inquiries', JSON.stringify({
+        const kv = context.locals.runtime?.env?.INQUIRIES as KVNamespace | undefined;
+        if (kv) {
+          const key = `inquiry:${crypto.randomUUID()}`;
+          await kv.put(key, JSON.stringify({
             ...inquiryData,
-            id: crypto.randomUUID(),
+            id: key,
             createdAt: now.toISOString(),
           }));
         }
