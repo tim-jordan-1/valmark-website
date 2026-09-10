@@ -42,9 +42,13 @@ const inquirySchema = z.object({
   service: z.enum(SERVICE_NAMES, {
     errorMap: () => ({ message: 'Please select a service' }),
   }),
-  message: z.string().max(5000).optional().default(''),
-  source: z.enum(['lead-form', 'contact-form']).optional().default('contact-form'),
-  honeypot: z.string().max(0, 'Bot detected').optional().default(''),
+  // ponytail: .nullish(), not .optional().default(''). Astro maps a present-but-empty
+  // form field to null unless the OUTERMOST validator is ZodOptional (see
+  // astro/dist/actions/runtime/server.js handleFormDataGet). .default() wraps it in
+  // ZodDefault, so blank fields arrived as null and failed validation.
+  message: z.string().max(5000).nullish(),
+  source: z.enum(['lead-form', 'contact-form']).nullish(),
+  honeypot: z.string().max(0, 'Bot detected').nullish(),
 });
 
 export const server = {
@@ -74,8 +78,8 @@ export const server = {
         email: input.email,
         phone: input.phone,
         service: input.service,
-        message: input.message,
-        source: input.source,
+        message: input.message ?? '',
+        source: input.source ?? 'contact-form',
         timestamp,
       };
 
