@@ -42,41 +42,36 @@ else
   echo -e "${GREEN}✓ API key saved to .env${NC}"
 fi
 
-# Phase 1.4: Add to Vercel
-echo -e "\n${BLUE}Phase 1.4: Vercel Environment Variables${NC}"
-if vercel whoami &>/dev/null; then
-  echo "Adding RESEND_API_KEY to Vercel (all environments)..."
-  for env in production preview development; do
-    printf "%s" "$RESEND_KEY" | vercel env add RESEND_API_KEY "$env" --force 2>/dev/null && \
+# Phase 1.4: Add to Cloudflare Pages
+echo -e "\n${BLUE}Phase 1.4: Cloudflare Pages Environment Variables${NC}"
+if wrangler whoami &>/dev/null; then
+  echo "Adding RESEND_API_KEY to Cloudflare Pages (production + preview)..."
+  for env in production preview; do
+    printf "%s" "$RESEND_KEY" | wrangler pages secret put RESEND_API_KEY --project-name valmark-website --env "$env" 2>/dev/null && \
       echo -e "  ${GREEN}✓ $env${NC}" || \
       echo -e "  ${GREEN}✓ $env (already set)${NC}"
   done
 else
-  echo -e "${RED}Vercel CLI not authenticated. Run: vercel login${NC}"
+  echo -e "${RED}Wrangler CLI not authenticated. Run: wrangler login${NC}"
   exit 1
 fi
 
 # Phase 7.3: KV Store
-echo -e "\n${BLUE}Phase 7.3: Vercel KV Store (optional)${NC}"
-echo "Attempting to add Upstash KV integration..."
-if vercel integration add upstash/upstash-kv 2>&1 | grep -q "action_required"; then
-  echo "Accept the Upstash terms in your browser, then re-run this script."
-  echo "Or skip — KV storage is optional (inquiries still go to email)."
-elif vercel integration add upstash/upstash-kv 2>&1 | grep -q "already"; then
-  echo -e "${GREEN}✓ Upstash KV already installed${NC}"
-else
-  echo -e "${GREEN}✓ Upstash KV integration added${NC}"
-fi
+echo -e "\n${BLUE}Phase 7.3: Cloudflare KV Store (optional)${NC}"
+echo "Cloudflare KV is configured via bindings in wrangler.toml — no separate"
+echo "integration step is needed. Ensure the [[kv_namespaces]] binding for"
+echo "inquiries is set up in wrangler.toml and the namespace exists in your"
+echo "Cloudflare account."
 
 # Phase 6.3: Production deploy with API key
 echo -e "\n${BLUE}Phase 6.3: Production Deploy${NC}"
 echo "Deploying to production with API key..."
-vercel --prod --yes 2>&1 | tail -5
+npm run build && wrangler pages deploy dist 2>&1 | tail -5
 echo -e "${GREEN}✓ Production deploy complete${NC}"
 
 # Phase 6.4: Monitoring webhook
 echo -e "\n${BLUE}Phase 6.4: Monitoring Setup${NC}"
-WEBHOOK_URL="https://valmark-website.vercel.app/api/resend-webhook"
+WEBHOOK_URL="https://valmark-website.pages.dev/api/resend-webhook"
 echo "Webhook endpoint is live at: $WEBHOOK_URL"
 echo ""
 echo "To complete monitoring setup, go to Resend Dashboard → Webhooks → Add:"
@@ -91,18 +86,18 @@ echo "To send from noreply@valmark.com.au:"
 echo "  1. Resend Dashboard → Domains → Add Domain → valmark.com.au"
 echo "  2. Add the DNS records Resend provides to your domain registrar"
 echo "  3. Wait for verification (up to 48h)"
-echo "  4. Set RESEND_DOMAIN_VERIFIED=true in Vercel env vars"
+echo "  4. Set RESEND_DOMAIN_VERIFIED=true in Cloudflare Pages env vars"
 echo ""
 
 # Verification
 echo -e "${BOLD}Verification checklist:${NC}"
 echo -e "  ${GREEN}✓${NC} Resend SDK installed"
-echo -e "  ${GREEN}✓${NC} Vercel adapter configured"
+echo -e "  ${GREEN}✓${NC} Cloudflare adapter configured"
 echo -e "  ${GREEN}✓${NC} Email templates (notification + confirmation)"
 echo -e "  ${GREEN}✓${NC} Astro Action with validation, honeypot, rate limiting"
 echo -e "  ${GREEN}✓${NC} InquiryForm component"
 echo -e "  ${GREEN}✓${NC} Webhook endpoint for delivery monitoring"
-echo -e "  ${GREEN}✓${NC} API key configured in .env + Vercel"
+echo -e "  ${GREEN}✓${NC} API key configured in .env + Cloudflare Pages"
 echo -e "  ${GREEN}✓${NC} Production deployed"
 echo ""
 echo -e "${GREEN}${BOLD}Setup complete!${NC}"
