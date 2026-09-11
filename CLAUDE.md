@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What This Is
 
-A multi-page marketing website for **Valmark Waterproofing** (Victoria, Australia), built with **Astro** and **Tailwind CSS v4**. Static site deployed to Cloudflare Pages — zero client-side JS except small interactive islands (slider, carousel, form handlers, gallery filter).
+A multi-page marketing website for **Valmark Waterproofing** (Victoria, Australia), built with **Astro** and **Tailwind CSS v4**. Static site deployed to Cloudflare Workers — zero client-side JS except small interactive islands (slider, carousel, form handlers, gallery filter).
 
 ## Commands
 
@@ -39,7 +39,7 @@ Astro static site with Tailwind v4 via Vite plugin. No React — all interactivi
 | `src/styles/global.css` | Tailwind v4 theme tokens + base styles |
 | `public/uploads/` | Static images |
 | `astro.config.mjs` | Astro + Tailwind Vite plugin + Cloudflare adapter (`prerenderEnvironment: 'node'`) |
-| `wrangler.toml` | Cloudflare Pages project config, KV namespace binding |
+| `wrangler.toml` | Cloudflare Workers project config, KV namespace bindings |
 | `public/_headers` | Cache headers for uploads and JS assets |
 
 ## Interactive Islands (ship client JS)
@@ -99,7 +99,7 @@ reintroduces the bug. Guarded by `src/actions/schema.test.mjs` (`npx tsx src/act
 **2. `curl` cannot reproduce either bug.** Omitting `honeypot` entirely takes the working
 (field-absent) path. Reproduce with a real browser — Playwright — and read the network response.
 
-**3. `security.allowedDomains` is required on Cloudflare Pages.**
+**3. `security.allowedDomains` is required on Cloudflare Workers.**
 Astro's `checkOrigin` middleware compares the `Origin` header to `Astro.url.origin`. Astro ignores
 `X-Forwarded-Host` unless `security.allowedDomains` is configured, so behind Cloudflare's proxy the
 host falls back to the literal `localhost`, no browser origin ever matches, and every POST gets
@@ -134,7 +134,7 @@ Placeholder text (`[BUSINESS ADDRESS HERE]`, `Lic. #WP-4471822`) needs real valu
 
 ## Deployment
 
-Hosted on **Cloudflare Pages**. Astro builds to `dist/`, deployed via Wrangler.
+Hosted on **Cloudflare Workers**. Astro builds to `dist/`, deployed via Wrangler.
 
 ```bash
 npm run build && npx wrangler deploy           # Deploy to production (no `dist` arg — Wrangler reads dist/server/wrangler.json)

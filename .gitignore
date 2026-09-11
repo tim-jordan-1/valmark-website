@@ -9,3 +9,5 @@ dist/
 # Cloudflare
 .dev.vars
 .wrangler/
+
+.vercel/

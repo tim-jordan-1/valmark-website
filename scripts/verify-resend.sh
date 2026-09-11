@@ -38,7 +38,7 @@ echo -e "${BOLD}Resend Integration — Verification${NC}\n"
 
 echo -e "${BOLD}Phase 1: Dependencies${NC}"
 check "resend package installed" "node -e \"require('resend')\""
-check "@astrojs/cloudflare installed" "node -e \"require('@astrojs/cloudflare')\""
+check "@astrojs/cloudflare installed" "test -d node_modules/@astrojs/cloudflare"
 check ".env file exists" "test -f .env"
 check "RESEND_API_KEY set in .env" "grep -q '^RESEND_API_KEY=re_[a-zA-Z0-9]' .env"
 
@@ -68,7 +68,7 @@ echo -e "\n${BOLD}Phase 6: Build & Deploy${NC}"
 check "TypeScript passes" "npx astro check 2>&1 | grep -q '0 errors'"
 check "Build succeeds" "npm run build 2>&1 | grep -q 'Complete'"
 warn "Wrangler CLI authenticated" "wrangler whoami"
-warn "Production deployment exists" "wrangler pages deployment list --project-name valmark-website 2>&1 | grep -q 'Ready'"
+warn "Production deployment exists" "wrangler deployments list 2>&1 | grep -q 'Active'"
 
 echo -e "\n${BOLD}Phase 7: Enhancements${NC}"
 check "Rate limiting implemented" "grep -q 'checkRateLimit' src/actions/index.ts"

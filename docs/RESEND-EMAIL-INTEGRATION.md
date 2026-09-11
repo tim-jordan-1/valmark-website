@@ -1,6 +1,6 @@
 # Resend Email Integration
 
-Email automation for the Valmark Waterproofing contact and inquiry forms using [Resend](https://resend.com) + Astro server endpoints, deployed on Cloudflare Pages.
+Email automation for the Valmark Waterproofing contact and inquiry forms using [Resend](https://resend.com) + Astro server endpoints, deployed on Cloudflare Workers.
 
 ## Overview
 
@@ -69,7 +69,7 @@ Add the same variable in Cloudflare:
 
 ```bash
 # Via Wrangler CLI
-wrangler pages secret put RESEND_API_KEY
+wrangler secret put RESEND_API_KEY
 
 # Or: Cloudflare Dashboard → Workers & Pages → Project → Settings → Environment Variables
 ```
@@ -696,10 +696,10 @@ npm run dev
 
 ```bash
 # Deploy to Cloudflare Pages preview
-npm run build && wrangler pages deploy dist
+npm run build && wrangler deploy
 
 # Verify the RESEND_API_KEY environment variable is set
-wrangler pages deployment list
+wrangler deployments list
 ```
 
 **What to verify on preview:**
@@ -719,7 +719,7 @@ wrangler pages deployment list
 # (only after domain DNS records are verified)
 
 # Deploy to production
-npm run build && wrangler pages deploy dist
+npm run build && wrangler deploy
 ```
 
 **What to verify in production:**

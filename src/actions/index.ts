@@ -12,6 +12,7 @@ import {
 } from '../lib/emails/inquiry-confirmation';
 import { SERVICE_NAMES } from '../data/services';
 import { adminEmail } from '../lib/admin-email';
+import { RESEND_API_KEY, RESEND_DOMAIN_VERIFIED } from 'astro:env/server';
 
 // ponytail: in-memory rate limiter, resets on cold start — fine for low traffic
 const submissions = new Map<string, number[]>();
@@ -27,12 +28,16 @@ function checkRateLimit(ip: string): boolean {
   return true;
 }
 
-// ponytail: dev mode uses Resend's test domain, prod uses verified domain
-const SENDER_DOMAIN = process.env.RESEND_DOMAIN_VERIFIED === 'true'
-  ? 'valmark.com.au'
-  : 'resend.dev';
-const NOTIFICATION_FROM = `Valmark Website <noreply@${SENDER_DOMAIN}>`;
-const CONFIRMATION_FROM = `Valmark Waterproofing <noreply@${SENDER_DOMAIN}>`;
+// Must be read per request, not at module scope. astro:env secrets are `let`
+// bindings that Astro re-assigns once the Worker's env is bound; hoisting this
+// to module scope would freeze it to the cold-start value.
+function senderAddresses() {
+  const domain = RESEND_DOMAIN_VERIFIED === 'true' ? 'valmark.com.au' : 'resend.dev';
+  return {
+    notificationFrom: `Valmark Website <noreply@${domain}>`,
+    confirmationFrom: `Valmark Waterproofing <noreply@${domain}>`,
+  };
+}
 
 const inquirySchema = z.object({
   name: z.string().min(1, 'Name is required').max(200),
@@ -64,7 +69,8 @@ export const server = {
         throw new Error('Too many submissions. Please try again later or call us on 0422 878 034.');
       }
 
-      const resend = new Resend(process.env.RESEND_API_KEY);
+      const resend = new Resend(RESEND_API_KEY);
+      const { notificationFrom, confirmationFrom } = senderAddresses();
       const now = new Date();
       const timestamp = now.toLocaleString('en-AU', {
         timeZone: 'Australia/Melbourne',
@@ -84,7 +90,7 @@ export const server = {
 
       const [notification, confirmation] = await Promise.allSettled([
         resend.emails.send({
-          from: NOTIFICATION_FROM,
+          from: notificationFrom,
           replyTo: input.email,
           to: [adminEmail()],
           subject: `New inquiry: ${input.service} — ${input.name}`,
@@ -92,7 +98,7 @@ export const server = {
           text: inquiryNotificationText(inquiryData),
         }),
         resend.emails.send({
-          from: CONFIRMATION_FROM,
+          from: confirmationFrom,
           to: [input.email],
           subject: "We've received your inquiry — Valmark Waterproofing",
           html: confirmationHtml(input.name),
@@ -111,7 +117,7 @@ export const server = {
 
       // Store inquiry in Cloudflare KV (best-effort, non-blocking)
       try {
-        const { env } = await import("cloudflare:workers") as { env: Record<string, any> };
+        const { env } = await import('cloudflare:workers');
         const inquiriesKv = env.INQUIRIES;
         if (inquiriesKv) {
           const key = `inquiry:${crypto.randomUUID()}`;

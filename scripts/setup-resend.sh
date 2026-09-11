@@ -42,15 +42,17 @@ else
   echo -e "${GREEN}✓ API key saved to .env${NC}"
 fi
 
-# Phase 1.4: Add to Cloudflare Pages
-echo -e "\n${BLUE}Phase 1.4: Cloudflare Pages Environment Variables${NC}"
+# Phase 1.4: Add to Cloudflare Workers
+echo -e "\n${BLUE}Phase 1.4: Cloudflare Workers Environment Variables${NC}"
 if wrangler whoami &>/dev/null; then
-  echo "Adding RESEND_API_KEY to Cloudflare Pages (production + preview)..."
-  for env in production preview; do
-    printf "%s" "$RESEND_KEY" | wrangler pages secret put RESEND_API_KEY --project-name valmark-website --env "$env" 2>/dev/null && \
-      echo -e "  ${GREEN}✓ $env${NC}" || \
-      echo -e "  ${GREEN}✓ $env (already set)${NC}"
-  done
+  echo "Adding RESEND_API_KEY to Cloudflare Workers..."
+  if printf "%s" "$RESEND_KEY" | wrangler secret put RESEND_API_KEY; then
+    echo -e "  ${GREEN}✓ Secret set${NC}"
+  else
+    echo -e "  ${RED}✗ Failed to set RESEND_API_KEY${NC}"
+    echo "  If the Worker does not exist yet, run 'wrangler deploy' first, then re-run this script."
+    exit 1
+  fi
 else
   echo -e "${RED}Wrangler CLI not authenticated. Run: wrangler login${NC}"
   exit 1
@@ -66,13 +68,15 @@ echo "Cloudflare account."
 # Phase 6.3: Production deploy with API key
 echo -e "\n${BLUE}Phase 6.3: Production Deploy${NC}"
 echo "Deploying to production with API key..."
-npm run build && wrangler pages deploy dist 2>&1 | tail -5
+npm run build && wrangler deploy 2>&1 | tail -5
 echo -e "${GREEN}✓ Production deploy complete${NC}"
 
 # Phase 6.4: Monitoring webhook
 echo -e "\n${BLUE}Phase 6.4: Monitoring Setup${NC}"
-WEBHOOK_URL="https://valmark-website.pages.dev/api/resend-webhook"
-echo "Webhook endpoint is live at: $WEBHOOK_URL"
+WEBHOOK_URL="https://valmark-website.<your-account-subdomain>.workers.dev/api/resend-webhook"
+echo "Webhook endpoint (replace <your-account-subdomain> with the value from"
+echo "'wrangler deploy' output or the Cloudflare dashboard):"
+echo "  $WEBHOOK_URL"
 echo ""
 echo "To complete monitoring setup, go to Resend Dashboard → Webhooks → Add:"
 echo "  URL: $WEBHOOK_URL"
@@ -86,7 +90,7 @@ echo "To send from noreply@valmark.com.au:"
 echo "  1. Resend Dashboard → Domains → Add Domain → valmark.com.au"
 echo "  2. Add the DNS records Resend provides to your domain registrar"
 echo "  3. Wait for verification (up to 48h)"
-echo "  4. Set RESEND_DOMAIN_VERIFIED=true in Cloudflare Pages env vars"
+echo "  4. Set RESEND_DOMAIN_VERIFIED=true in Cloudflare Workers env vars"
 echo ""
 
 # Verification
@@ -97,7 +101,7 @@ echo -e "  ${GREEN}✓${NC} Email templates (notification + confirmation)"
 echo -e "  ${GREEN}✓${NC} Astro Action with validation, honeypot, rate limiting"
 echo -e "  ${GREEN}✓${NC} InquiryForm component"
 echo -e "  ${GREEN}✓${NC} Webhook endpoint for delivery monitoring"
-echo -e "  ${GREEN}✓${NC} API key configured in .env + Cloudflare Pages"
+echo -e "  ${GREEN}✓${NC} API key configured in .env + Cloudflare Workers"
 echo -e "  ${GREEN}✓${NC} Production deployed"
 echo ""
 echo -e "${GREEN}${BOLD}Setup complete!${NC}"

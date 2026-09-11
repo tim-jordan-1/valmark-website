@@ -42,7 +42,7 @@
 
 - [ ] Create Resend account and get API key
 - [ ] Verify `valmark.com.au` domain in Resend (DNS records: SPF, DKIM, DMARC)
-- [ ] Add `RESEND_API_KEY` via `wrangler pages secret put`
+- [ ] Add `RESEND_API_KEY` via `wrangler secret put`
 - [ ] Wire up both forms (home page lead form + contact page form) to the Astro action
 - [ ] Test admin notification email to `admin@valmark.com.au`
 - [ ] Test visitor auto-reply email
