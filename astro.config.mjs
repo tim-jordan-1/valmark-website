@@ -8,6 +8,7 @@ export default defineConfig({
   security: {
     allowedDomains: [
       { hostname: '**.pages.dev', protocol: 'https' },
+      { hostname: '**.workers.dev', protocol: 'https' },
       { hostname: 'valmark.com.au', protocol: 'https' },
       { hostname: '**.valmark.com.au', protocol: 'https' },
     ],

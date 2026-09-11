@@ -68,7 +68,7 @@ The form works without JS (native POST re-renders the page via `Astro.getActionR
 client script intercepts submit and `fetch`es the same URL, swapping in a success message on
 `res.ok`.
 
-Required env vars (set via `wrangler pages secret put <NAME>` for Preview + Production):
+Required env vars (set via `npx wrangler secret put <NAME>`):
 `RESEND_API_KEY`, `ADMIN_EMAIL`. `ADMIN_EMAIL` is read at call time and throws if unset.
 `RESEND_DOMAIN_VERIFIED=true` switches the sender from `resend.dev` to `valmark.com.au`.
 
@@ -137,11 +137,11 @@ Placeholder text (`[BUSINESS ADDRESS HERE]`, `Lic. #WP-4471822`) needs real valu
 Hosted on **Cloudflare Pages**. Astro builds to `dist/`, deployed via Wrangler.
 
 ```bash
-npm run build && wrangler pages deploy dist   # Deploy to production
-wrangler pages deployment list --project-name valmark-website  # Check deployments
+npm run build && npx wrangler deploy           # Deploy to production (no `dist` arg — Wrangler reads dist/server/wrangler.json)
+npx wrangler deployments list                 # Check deployments
 ```
 
-Environment secrets are set via `wrangler pages secret put <NAME>`. Required:
+Environment secrets are set via `npx wrangler secret put <NAME>`. Required:
 `RESEND_API_KEY`, `ADMIN_EMAIL`. Optional: `RESEND_DOMAIN_VERIFIED`.
 
 KV namespace `INQUIRIES` stores form submissions (best-effort). Namespace ID
@@ -153,5 +153,5 @@ Direct pushes to `main` are blocked — land changes via PR
 (`gh pr create` → `gh pr merge`).
 
 After deploying, confirm the deployment actually landed
-(`wrangler pages deployment list --project-name valmark-website`) before
+(`npx wrangler deployments list`) before
 testing — a failed deploy looks identical to an unfixed bug.
