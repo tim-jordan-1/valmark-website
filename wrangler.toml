@@ -1,8 +1,11 @@
 name = "valmark-website"
 compatibility_date = "2025-04-01"
 compatibility_flags = ["nodejs_compat"]
-pages_build_output_dir = "dist"
+
+[[kv_namespaces]]
+binding = "SESSION"
+id = "dda7160d94064b29b5b7867209bed05e"
 
 [[kv_namespaces]]
 binding = "INQUIRIES"
-id = "<REPLACE_AFTER_CREATING_NAMESPACE>"
+id = "bcf5e293026c4eca80fe124cc21ef870"
