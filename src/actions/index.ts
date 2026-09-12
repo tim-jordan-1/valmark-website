@@ -64,7 +64,11 @@ export const server = {
         return { success: true };
       }
 
-      const ip = context.request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown';
+      // Cloudflare Workers requests carry CF-Connecting-IP, not X-Forwarded-For
+      // (that header doesn't exist on this platform) — reading the wrong one
+      // means every request resolves to the same 'unknown' bucket, turning
+      // this into a single site-wide limit shared by every visitor.
+      const ip = context.request.headers.get('cf-connecting-ip') || 'unknown';
       if (!checkRateLimit(ip)) {
         throw new Error('Too many submissions. Please try again later or call us on 0422 878 034.');
       }
@@ -126,6 +130,8 @@ export const server = {
             id: key,
             createdAt: now.toISOString(),
           }));
+        } else {
+          console.warn('INQUIRIES KV binding not available; skipping storage');
         }
       } catch (e) {
         console.warn('KV storage failed (non-critical):', e);
