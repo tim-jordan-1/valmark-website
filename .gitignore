@@ -3,7 +3,11 @@ node_modules/
 dist/
 .astro/
 .env
-.vercel/
 .image-slots.state.json
-.vercel
 .env*
+
+# Cloudflare
+.dev.vars
+.wrangler/
+
+.vercel/

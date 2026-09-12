@@ -1,6 +1,6 @@
 # Resend Email Integration
 
-Email automation for the Valmark Waterproofing contact and inquiry forms using [Resend](https://resend.com) + Astro server endpoints, deployed on Vercel.
+Email automation for the Valmark Waterproofing contact and inquiry forms using [Resend](https://resend.com) + Astro server endpoints, deployed on Cloudflare Workers.
 
 ## Overview
 
@@ -10,7 +10,7 @@ Email automation for the Valmark Waterproofing contact and inquiry forms using [
 | **Admin inbox** | admin@valmark.com.au |
 | **Forms** | Home page lead form + Contact page form |
 | **Stack** | Astro Action → Resend Node.js SDK → email |
-| **Hosting** | Vercel serverless functions (via `@astrojs/vercel` adapter) |
+| **Hosting** | Cloudflare Workers (via `@astrojs/cloudflare` adapter) |
 
 ### What happens when a visitor submits a form
 
@@ -55,7 +55,7 @@ Email automation for the Valmark Waterproofing contact and inquiry forms using [
 
 ### Task 1.4 — Configure environment variables
 
-- **Files**: `.env` (local), Vercel dashboard (production)
+- **Files**: `.env` (local), Cloudflare dashboard (production)
 - **Complexity**: Small
 - **Dependencies**: Task 1.3
 
@@ -65,13 +65,13 @@ Create `.env` in the project root:
 RESEND_API_KEY=re_your_api_key_here
 ```
 
-Add the same variable in Vercel:
+Add the same variable in Cloudflare:
 
 ```bash
-# Via Vercel CLI
-vercel env add RESEND_API_KEY
+# Via Wrangler CLI
+wrangler secret put RESEND_API_KEY
 
-# Or: Vercel Dashboard → Project → Settings → Environment Variables
+# Or: Cloudflare Dashboard → Workers & Pages → Project → Settings → Environment Variables
 ```
 
 Ensure `.env` is in `.gitignore` (it already is).
@@ -90,17 +90,17 @@ npm install resend
 
 ## Phase 2: Astro Server Configuration
 
-### Task 2.1 — Install the Vercel adapter
+### Task 2.1 — Install the Cloudflare adapter
 
 - **Files**: `package.json`, `astro.config.mjs`
 - **Complexity**: Small
 - **Dependencies**: Astro project initialised
 
 ```bash
-npx astro add vercel
+npx astro add cloudflare
 ```
 
-This automatically installs `@astrojs/vercel` and updates `astro.config.mjs`.
+This automatically installs `@astrojs/cloudflare` and updates `astro.config.mjs`.
 
 ### Task 2.2 — Configure hybrid rendering
 
@@ -113,19 +113,19 @@ The site is mostly static (marketing pages), but the form endpoint needs server-
 ```ts
 // astro.config.mjs
 import { defineConfig } from 'astro/config';
-import vercel from '@astrojs/vercel';
+import cloudflare from '@astrojs/cloudflare';
 import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig({
   output: 'static',
-  adapter: vercel(),
+  adapter: cloudflare({ prerenderEnvironment: 'node' }),
   vite: {
     plugins: [tailwindcss()],
   },
 });
 ```
 
-> **Note**: With `output: 'static'`, individual routes opt into server rendering with `export const prerender = false;`. The Vercel adapter deploys these as serverless functions automatically.
+> **Note**: With `output: 'static'`, individual routes opt into server rendering with `export const prerender = false;`. The Cloudflare adapter deploys these as Cloudflare Workers automatically.
 
 ### Task 2.3 — Configure environment variable schema (optional but recommended)
 
@@ -488,7 +488,7 @@ const error = result?.error;
 {success ? (
   <div class="text-center py-8">
     <p class="text-lg font-bold text-[#03334D]">
-      Thanks — a technician will call you back within one business hour.
+      Thanks — a technician will call you back within one to two business days.
     </p>
   </div>
 ) : (
@@ -643,7 +643,7 @@ For a smoother UX, add a small script that submits the form via `fetch` instead 
         if (res.ok) {
           form.innerHTML = `<div class="text-center py-8">
             <p class="text-lg font-bold" style="color:#03334D">
-              Thanks — a technician will call you back within one business hour.
+              Thanks — a technician will call you back within one to two business days.
             </p>
           </div>`;
         } else {
@@ -695,11 +695,11 @@ npm run dev
 - **Dependencies**: Task 6.1
 
 ```bash
-# Deploy to Vercel preview
-vercel
+# Deploy to Cloudflare Pages preview
+npm run build && wrangler deploy
 
 # Verify the RESEND_API_KEY environment variable is set
-vercel env ls
+wrangler deployments list
 ```
 
 **What to verify on preview:**
@@ -719,7 +719,7 @@ vercel env ls
 # (only after domain DNS records are verified)
 
 # Deploy to production
-vercel --prod
+npm run build && wrangler deploy
 ```
 
 **What to verify in production:**
@@ -748,7 +748,7 @@ Already included in Task 4.1 and Task 5.1 above. The hidden `honeypot` input cat
 
 ### Task 7.2 — Rate limiting per IP
 
-Prevent abuse by limiting submissions per IP address. Vercel Edge Config or a simple in-memory map works for low traffic.
+Prevent abuse by limiting submissions per IP address. Cloudflare Workers KV or a simple in-memory map works for low traffic.
 
 - **Files**: `src/actions/index.ts` (add rate check before sending)
 - **Complexity**: Medium
@@ -770,27 +770,24 @@ function checkRateLimit(ip: string): boolean {
 }
 ```
 
-### Task 7.3 — Store submissions in Vercel KV (optional)
+### Task 7.3 — Store submissions in Cloudflare Workers KV (optional)
 
-If you want a record of all inquiries beyond the email inbox, store them in Vercel KV (Redis-compatible key-value store, free tier: 3,000 requests/day).
+If you want a record of all inquiries beyond the email inbox, store them in Cloudflare Workers KV (key-value store, free tier: 100,000 reads/day, 1,000 writes/day).
 
-- **Files**: `src/actions/index.ts`, `package.json`
+- **Files**: `src/actions/index.ts`, `wrangler.jsonc`
 - **Complexity**: Medium
 - **Dependencies**: Task 4.1
 
-```bash
-npm install @vercel/kv
-```
-
 ```ts
-import { kv } from '@vercel/kv';
-
 // Inside the action handler, after sending emails:
-await kv.lpush('inquiries', JSON.stringify({
-  ...inquiryData,
-  id: crypto.randomUUID(),
-  createdAt: now.toISOString(),
-}));
+const { env } = await import("cloudflare:workers");
+await env.INQUIRIES.put(
+  crypto.randomUUID(),
+  JSON.stringify({
+    ...inquiryData,
+    createdAt: now.toISOString(),
+  })
+);
 ```
 
 ---
@@ -806,7 +803,7 @@ Phase 1 (Setup)
   1.5 Install SDK ← Astro project exists
 
 Phase 2 (Server config)
-  2.1 Install Vercel adapter ← Astro project exists
+  2.1 Install Cloudflare adapter ← Astro project exists
   2.2 Configure hybrid rendering ← 2.1
   2.3 Env variable schema ← 2.2
 
@@ -833,7 +830,7 @@ Phase 6 (Testing)
 Phase 7 (Optional)
   7.1 Honeypot ← done (in 4.1/5.1)
   7.2 Rate limiting ← 4.1
-  7.3 Vercel KV storage ← 4.1
+  7.3 Cloudflare Workers KV storage ← 4.1
 ```
 
 ## Subagent Assignment

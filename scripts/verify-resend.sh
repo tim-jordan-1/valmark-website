@@ -38,13 +38,12 @@ echo -e "${BOLD}Resend Integration — Verification${NC}\n"
 
 echo -e "${BOLD}Phase 1: Dependencies${NC}"
 check "resend package installed" "node -e \"require('resend')\""
-check "@astrojs/vercel installed" "node -e \"require('@astrojs/vercel')\""
-check "@vercel/kv installed" "node -e \"require('@vercel/kv')\""
+check "@astrojs/cloudflare installed" "test -d node_modules/@astrojs/cloudflare"
 check ".env file exists" "test -f .env"
 check "RESEND_API_KEY set in .env" "grep -q '^RESEND_API_KEY=re_[a-zA-Z0-9]' .env"
 
 echo -e "\n${BOLD}Phase 2: Server Configuration${NC}"
-check "Vercel adapter in astro.config" "grep -q 'vercel' astro.config.mjs"
+check "Cloudflare adapter in astro.config" "grep -q 'cloudflare' astro.config.mjs"
 check "Env schema configured" "grep -q 'RESEND_API_KEY' astro.config.mjs"
 
 echo -e "\n${BOLD}Phase 3: Email Templates${NC}"
@@ -68,12 +67,12 @@ check "Compact mode support" "grep -q 'compact' src/components/InquiryForm.astro
 echo -e "\n${BOLD}Phase 6: Build & Deploy${NC}"
 check "TypeScript passes" "npx astro check 2>&1 | grep -q '0 errors'"
 check "Build succeeds" "npm run build 2>&1 | grep -q 'Complete'"
-warn "Vercel CLI authenticated" "vercel whoami"
-warn "Production deployment exists" "vercel ls 2>&1 | grep -q 'Ready'"
+warn "Wrangler CLI authenticated" "wrangler whoami"
+warn "Production deployment exists" "wrangler deployments list 2>&1 | grep -q 'Active'"
 
 echo -e "\n${BOLD}Phase 7: Enhancements${NC}"
 check "Rate limiting implemented" "grep -q 'checkRateLimit' src/actions/index.ts"
-check "KV storage code" "grep -q 'kv.lpush' src/actions/index.ts"
+check "KV storage code" "grep -qE 'cloudflare:workers|inquiriesKv.put' src/actions/index.ts"
 check "Webhook endpoint" "test -f src/pages/api/resend-webhook.ts"
 
 echo -e "\n${BOLD}Results: ${GREEN}$PASS passed${NC}, ${RED}$FAIL failed${NC}, ${YELLOW}$WARN warnings${NC}"
