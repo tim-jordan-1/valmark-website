@@ -1,6 +1,7 @@
 ---
 import Base from "../layouts/Base.astro";
 import BeforeAfterSlider from "../components/BeforeAfterSlider.astro";
+import ImageCarousel from "../components/ImageCarousel.astro";
 import InquiryForm from "../components/InquiryForm.astro";
 import { services } from "../data/services";
 import { site, threeBoxes, credentials } from "../data/site";
@@ -39,9 +40,14 @@ export const prerender = false;
           </a>
         </div>
       </div>
-      <div
-        class="hidden lg:block h-[400px] bg-[repeating-linear-gradient(45deg,transparent,transparent_10px,rgba(255,255,255,.05)_10px,rgba(255,255,255,.05)_20px)] rounded"
-      >
+      <div class="hidden lg:block rounded overflow-hidden">
+        <ImageCarousel
+          images={[
+            "/uploads/waterpoofing-linear-floor-drain.png",
+            "/uploads/wet-room-drain-installation.png",
+          ]}
+          alt="Valmark waterproofing work"
+        />
       </div>
     </div>
   </section>

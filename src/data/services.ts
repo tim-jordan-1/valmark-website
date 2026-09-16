@@ -67,6 +67,8 @@ export const services: Service[] = [
     name: 'Balconies, terraces and rooftops',
     blurb: 'Falls, membrane and door junctions corrected so water drains out, not back into the home.',
     long: 'We correct falls to outlets, membrane the deck and detail door and wall junctions on balconies, terraces and rooftops, so water is carried away instead of pooling or tracking inside.',
+    before: '/uploads/balcony-before.png',
+    after: '/uploads/balcony-after.png',
     steps: [
       { n: '1', title: 'Inspect Falls & Drainage', body: 'We check substrate condition, drainage, falls, outlets, door thresholds and perimeter details.' },
       { n: '2', title: 'Prepare', body: 'Surfaces are cleaned and repaired to provide a sound substrate for the waterproofing system.' },
