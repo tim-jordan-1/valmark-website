@@ -3,7 +3,7 @@ import { services } from "../data/services";
 import { site, navItems } from "../data/site";
 ---
 
-<footer class="bg-primary text-white pb-[62px] lg:pb-0">
+<footer class="bg-white text-black pb-[62px] lg:pb-0">
   <div class="max-w-[1200px] mx-auto px-6 py-16">
     <div class="grid grid-cols-[repeat(auto-fit,minmax(180px,1fr))] gap-10">
       <!-- Logo + description -->
@@ -13,7 +13,7 @@ import { site, navItems } from "../data/site";
           alt="Valmark Waterproofing"
           class="h-[110px] w-auto mb-5"
         />
-        <p class="text-sm leading-relaxed text-gray-300">
+        <p class="text-sm leading-relaxed text-gray-600">
           Professional waterproofing services across Melbourne and Victoria.
           Protecting homes and buildings with expert membrane systems and
           quality workmanship.
@@ -28,7 +28,7 @@ import { site, navItems } from "../data/site";
             services.map((s) => (
               <a
                 href={`/services/${s.id}`}
-                class="text-sm text-gray-300 hover:text-accent transition-colors leading-relaxed"
+                class="text-sm text-gray-600 hover:text-accent transition-colors leading-relaxed"
               >
                 {s.name.split(",")[0]}
               </a>
@@ -45,7 +45,7 @@ import { site, navItems } from "../data/site";
             navItems.map((item) => (
               <a
                 href={item.href}
-                class="text-sm text-gray-300 hover:text-accent transition-colors"
+                class="text-sm text-gray-600 hover:text-accent transition-colors"
               >
                 {item.label}
               </a>
@@ -64,7 +64,7 @@ import { site, navItems } from "../data/site";
         >
         <a
           href={`mailto:${site.email}`}
-          class="block text-sm text-gray-300 hover:text-accent transition-colors mb-3"
+          class="block text-sm text-gray-600 hover:text-accent transition-colors mb-3"
           >{site.email}</a
         >
         <a href="/contact" class="text-sm text-accent hover:underline"
@@ -75,9 +75,9 @@ import { site, navItems } from "../data/site";
   </div>
 
   <!-- Bottom bar -->
-  <div class="border-t border-white/20">
+  <div class="border-t border-black/10">
     <div
-      class="max-w-[1200px] mx-auto px-6 py-5 flex flex-wrap justify-between items-center gap-4 text-sm text-gray-400"
+      class="max-w-[1200px] mx-auto px-6 py-5 flex flex-wrap justify-between items-center gap-4 text-sm text-gray-500"
     >
       <span>© 2026 Valmark Waterproofing LLC</span>
       <span>{site.license}</span>

@@ -100,6 +100,9 @@ export const services: Service[] = [
     name: 'Waterproofing repairs and leak remediation',
     blurb: 'Diagnosis and repair of failed waterproofing and active leaks, without a full strip-out where it is not needed.',
     long: 'We trace a leak to its source, then repair or replace only the failed section of membrane — full strip-outs only where the existing system genuinely cannot be saved.',
+    before: '/uploads/leak-remediation-before.png',
+    after: '/uploads/leak-remediation-after.png',
+    images: ['/uploads/leak-remediation-after.png'],
     steps: [
       { n: '1', title: 'Investigate', body: 'We inspect the affected area to identify the likely water entry point and cause of failure.' },
       { n: '2', title: 'Expose', body: 'Failed sealants, membranes or finishes are removed as required to access the problem area.' },
@@ -113,6 +116,8 @@ export const services: Service[] = [
     name: 'Epoxy moisture barriers',
     blurb: 'Epoxy moisture barrier coatings for damp or rising concrete slabs, applied ahead of flooring to stop moisture reaching the finish.',
     long: 'We apply epoxy moisture barrier coatings to damp or rising concrete slabs before flooring goes down, stopping residual slab moisture from reaching the finish and causing bond failure or odour down the track.',
+    before: '/uploads/epoxy-before.png',
+    after: '/uploads/epoxy-after.png',
     steps: [
       { n: '1', title: 'Assess Moisture', body: 'The substrate is checked to determine the moisture condition and appropriate moisture-control system.' },
       { n: '2', title: 'Prepare', body: 'Concrete or screed is cleaned and mechanically prepared where required to provide a suitable surface.' },

@@ -31,14 +31,14 @@ const error = result?.error;
       <div
         class={
           compact
-            ? "grid grid-cols-[repeat(auto-fit,minmax(180px,1fr))] gap-3.5"
+            ? "grid grid-cols-1 sm:grid-cols-2 gap-3.5"
             : "grid gap-4"
         }
       >
         <div
           class={
             compact
-              ? ""
+              ? "grid gap-3.5"
               : "grid grid-cols-[repeat(auto-fit,minmax(150px,1fr))] gap-4"
           }
         >
@@ -67,7 +67,7 @@ const error = result?.error;
         <div
           class={
             compact
-              ? ""
+              ? "grid gap-3.5"
               : "grid grid-cols-[repeat(auto-fit,minmax(150px,1fr))] gap-4"
           }
         >
