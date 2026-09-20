@@ -175,7 +175,7 @@ src/
 **Complexity:** Small
 **Dependencies:** 1.1
 
-Move `uploads/` → `public/uploads/`. Astro serves `public/` as-is at the root, so image paths remain `/uploads/logo-transparent.png` etc.
+Move `uploads/` → `public/uploads/`. Astro serves `public/` as-is at the root, so image paths remain `/uploads/valmark-logo.png` etc.
 
 ```bash
 mkdir -p public
@@ -186,7 +186,7 @@ mv uploads public/uploads
 
 | File | Used by |
 |------|---------|
-| `logo-transparent.png` | Header, footer |
+| `valmark-logo.png` | Header, footer |
 | `mark-raic.png` | Team card (Mark Raic) |
 | `laundry-before.jpeg` | Bathrooms before/after, gallery |
 | `laundry-after.jpeg` | Gallery |
@@ -525,7 +525,7 @@ const { title = 'Valmark Waterproofing — Melbourne', activePage = '' } = Astro
 Key details:
 - Sticky header: `position: sticky; top: 0; z-index: 50`
 - Desktop-only top info bar (email + phone) on `bg-primary`
-- Logo: `uploads/logo-transparent.png`, 168×112px
+- Logo: `uploads/valmark-logo.png`, 168×112px
 - Desktop nav: 6 links with active state (accent border-bottom when `activePage` matches)
 - "Enquiry Now" CTA button: `bg-accent text-white uppercase tracking-wider font-bold px-8 py-5`
 - Mobile: hamburger "Menu" button at `lg:hidden`, toggles a dropdown overlay
