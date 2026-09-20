@@ -39,8 +39,7 @@ export const cities = [
   'Melbourne CBD', 'Richmond', 'South Yarra', 'St Kilda', 'Brighton',
   'Glen Waverley', 'Box Hill', 'Doncaster', 'Preston', 'Brunswick',
   'Essendon', 'Footscray', 'Werribee', 'Frankston', 'Dandenong',
-  'Ringwood', 'Croydon', 'Berwick', 'Pakenham', 'Geelong',
-  'Ballarat', 'Bendigo',
+  'Ringwood', 'Croydon', 'Berwick', 'Pakenham',
 ];
 
 export const faqItems = [
