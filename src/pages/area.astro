@@ -1,11 +1,12 @@
 ---
 import Base from "../layouts/Base.astro";
+import ServiceAreaMap from "../components/ServiceAreaMap.astro";
 import { cities, site } from "../data/site";
 ---
 
 <Base title="Service Area — Valmark Waterproofing" activePage="area">
   <!-- Hero -->
-  <section class="bg-primary text-white py-16">
+  <section class="bg-primary text-white py-10">
     <div class="max-w-[1200px] mx-auto px-6 text-center">
       <p
         class="text-accent-light uppercase tracking-wider font-bold text-sm mb-4"
@@ -13,28 +14,12 @@ import { cities, site } from "../data/site";
         Service Area
       </p>
       <h1 class="text-[clamp(34px,4.8vw,52px)] font-black leading-tight mb-6">
-        Waterproofing Across Victoria
+        Waterproofing Across Melbourne
       </h1>
       <p class="text-lg leading-relaxed max-w-2xl mx-auto text-gray-300 mb-8">
-        We service Melbourne and surrounding regions. Enter your postcode to
-        check if you're in our coverage area.
+        We service Melbourne metropolitan area. Check out our service area map
+        below to see if we cover your suburb.
       </p>
-      <div class="flex items-center justify-center gap-3 flex-wrap">
-        <input
-          id="postcode-input"
-          type="text"
-          maxlength={4}
-          placeholder="Enter postcode"
-          class="bg-white text-primary rounded px-4 py-3 w-40 text-center font-medium"
-        />
-        <button
-          id="postcode-btn"
-          class="bg-accent text-white rounded px-6 py-3 font-bold cursor-pointer hover:opacity-90 transition-opacity"
-        >
-          Check coverage
-        </button>
-      </div>
-      <div id="postcode-msg" class="mt-3 text-white font-medium"></div>
     </div>
   </section>
 
@@ -65,35 +50,8 @@ import { cities, site } from "../data/site";
         </p>
       </div>
 
-      <!-- Right: map placeholder -->
-      <div
-        class="bg-bg-light border border-border rounded flex items-center justify-center text-text-tertiary text-lg font-medium"
-        style="aspect-ratio:4/3;background-image:repeating-linear-gradient(45deg,transparent,transparent 10px,rgba(0,0,0,.03) 10px,rgba(0,0,0,.03) 20px);"
-      >
-        Map placeholder
-      </div>
+      <!-- Right: service-area map -->
+      <ServiceAreaMap />
     </div>
   </section>
 </Base>
-
-<script>
-  const input = document.getElementById("postcode-input") as HTMLInputElement;
-  const btn = document.getElementById("postcode-btn");
-  const msg = document.getElementById("postcode-msg");
-
-  input?.addEventListener("input", () => {
-    input.value = input.value.replace(/\D/g, "").slice(0, 4);
-  });
-
-  btn?.addEventListener("click", () => {
-    const val = input?.value || "";
-    if (!msg) return;
-    if (val.length !== 4) {
-      msg.textContent = "Enter a 4-digit postcode.";
-    } else if (+val % 3 === 0) {
-      msg.textContent = "Just outside our line — call us, we make exceptions.";
-    } else {
-      msg.textContent = "Covered — next inspection window in 2 days.";
-    }
-  });
-</script>

@@ -1,0 +1,45 @@
+---
+// ServiceAreaMap.astro — Leaflet + OSM map shading the Greater Melbourne service area.
+// No props. Renders just the map box; the page positions it.
+---
+
+<!-- isolate: traps Leaflet's high pane/control z-index (up to ~1000) inside this box
+     so it can't paint over the sticky header (z-50) -->
+<div id="service-area-map" class="relative isolate aspect-[4/3] w-full overflow-hidden rounded border border-border">
+  <div id="service-area-map__leaflet" class="absolute inset-0 h-full w-full"></div>
+</div>
+
+<script>
+  import L from "leaflet";
+  import "leaflet/dist/leaflet.css";
+  import { serviceAreaCenter, serviceAreaZoom, serviceAreaPolygon } from "../data/service-area";
+
+  const el = document.getElementById("service-area-map__leaflet");
+  if (el) {
+    const map = L.map(el, {
+      center: serviceAreaCenter,
+      zoom: serviceAreaZoom,
+      scrollWheelZoom: false, // marketing map, not a tool — don't hijack page scroll
+    });
+
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      attribution:
+        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+      maxZoom: 19,
+    }).addTo(map);
+
+    const polygon = L.polygon(serviceAreaPolygon, {
+      color: "#1C9DD8", // --color-accent
+      weight: 2,
+      fillColor: "#1C9DD8",
+      fillOpacity: 0.15,
+    }).addTo(map);
+
+    polygon.bindTooltip("Our service area", { sticky: true });
+    map.fitBounds(polygon.getBounds(), { padding: [20, 20] });
+
+    // Leaflet mis-sizes tiles inside flex/grid until layout settles.
+    setTimeout(() => map.invalidateSize(), 200);
+    window.addEventListener("resize", () => map.invalidateSize());
+  }
+</script>
