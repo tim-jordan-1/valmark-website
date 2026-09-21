@@ -1,6 +1,7 @@
 ---
 import Base from "../layouts/Base.astro";
 import InquiryForm from "../components/InquiryForm.astro";
+import ServiceAreaMap from "../components/ServiceAreaMap.astro";
 import { site } from "../data/site";
 
 // Astro Actions need an on-demand route; the inquiry form lives here.
@@ -33,12 +34,7 @@ export const prerender = false;
 
       <!-- Right: map + info -->
       <div class="flex flex-col gap-6">
-        <div
-          class="bg-bg-light border border-border rounded h-64 flex items-center justify-center text-text-tertiary text-lg font-medium"
-          style="background-image:repeating-linear-gradient(45deg,transparent,transparent 10px,rgba(0,0,0,.03) 10px,rgba(0,0,0,.03) 20px);"
-        >
-          Map placeholder
-        </div>
+        <ServiceAreaMap />
         <div class="bg-white border border-border rounded p-6">
           <h3 class="font-bold text-lg text-primary mb-4">Contact Details</h3>
           <div class="flex flex-col gap-3 text-text-secondary">

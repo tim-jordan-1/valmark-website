@@ -2,9 +2,7 @@ export const site = {
   phone: '0422 878 034',
   tel: 'tel:0422878034',
   email: 'admin@valmark.com.au',
-  address: '[BUSINESS ADDRESS HERE]',
   warranty: 7,
-  license: 'Lic. #WP-4471822',
 };
 
 export const navItems = [
@@ -47,5 +45,5 @@ export const faqItems = [
   { q: 'Do you subcontract any of the work?', a: 'No. The same licensed crew handles diagnosis through handover — no subcontractors sent to your house.' },
   { q: 'How long does a basement waterproofing job take?', a: 'Most interior drain and sump systems are completed in 2–4 days, depending on the length of the run.' },
   { q: 'Is the warranty transferable if I sell my house?', a: 'Yes. Our 7-year written warranty is transferable to the next owner at no extra cost.' },
-  { q: 'What areas do you service?', a: 'We cover a 40-mile radius across three counties, with most inspections booked within 48 hours.' },
+  { q: 'What areas do you service?', a: 'We cover the greater Melbourne metropolitan area — see our Service Area page for the full coverage map. Most inspections are booked within 48 hours.' },
 ];
